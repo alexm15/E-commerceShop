@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class TableContrainsProductAndCategory : DbMigration
+    public partial class ContraintsProductAndCategory : DbMigration
     {
         public override void Up()
         {

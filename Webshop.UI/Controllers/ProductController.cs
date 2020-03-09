@@ -12,109 +12,107 @@ using Webshop.UI.Models;
 
 namespace Webshop.UI.Controllers
 {
-    public class CategoryController : Controller
+    public class ProductController : Controller
     {
         private WebshopContext db = new WebshopContext();
 
-        // GET: Category
+        // GET: Product
         public async Task<ActionResult> Index()
         {
-            var categories = await db.Categories.Include(c => c.Products).ToListAsync();
-
-            return View(categories);
+            return View(await db.Products.ToListAsync());
         }
 
-        // GET: Category/Details/5
+        // GET: Product/Details/5
         public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = await db.Categories.FindAsync(id);
-            if (category == null)
+            Product product = await db.Products.FindAsync(id);
+            if (product == null)
             {
                 return HttpNotFound();
             }
-            return View(category);
+            return View(product);
         }
 
-        // GET: Category/Create
+        // GET: Product/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Category/Create
+        // POST: Product/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name")] Category category)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description,Price")] Product product)
         {
             if (ModelState.IsValid)
             {
-                db.Categories.Add(category);
+                db.Products.Add(product);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
-            return View(category);
+            return View(product);
         }
 
-        // GET: Category/Edit/5
+        // GET: Product/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = await db.Categories.FindAsync(id);
-            if (category == null)
+            Product product = await db.Products.FindAsync(id);
+            if (product == null)
             {
                 return HttpNotFound();
             }
-            return View(category);
+            return View(product);
         }
 
-        // POST: Category/Edit/5
+        // POST: Product/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Name")] Category category)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,Price")] Product product)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(category).State = EntityState.Modified;
+                db.Entry(product).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(category);
+            return View(product);
         }
 
-        // GET: Category/Delete/5
+        // GET: Product/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = await db.Categories.FindAsync(id);
-            if (category == null)
+            Product product = await db.Products.FindAsync(id);
+            if (product == null)
             {
                 return HttpNotFound();
             }
-            return View(category);
+            return View(product);
         }
 
-        // POST: Category/Delete/5
+        // POST: Product/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Category category = await db.Categories.FindAsync(id);
-            db.Categories.Remove(category);
+            Product product = await db.Products.FindAsync(id);
+            db.Products.Remove(product);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }

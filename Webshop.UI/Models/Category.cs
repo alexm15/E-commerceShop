@@ -9,6 +9,6 @@ namespace Webshop.UI.Models
 
         public string Name { get; set; }
 
-        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+        public virtual ICollection<Product> Products { get; } = new List<Product>();
     }
 }

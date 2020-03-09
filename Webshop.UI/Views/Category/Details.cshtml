@@ -17,23 +17,10 @@
         <dd>
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt>
-            Products
-        </dt>
-
-        <dd>
-            <ul>
-                @foreach (var product in Model.Products)
-                {
-                    <li>@product.Name</li>
-                }
-            </ul>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
 
     </dl>
 </div>
-@*<p>
+<p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
-</p>*@
+</p>

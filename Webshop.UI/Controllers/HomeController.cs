@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Webshop.UI.App_Data;
 
 namespace Webshop.UI.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        private WebshopContext _context = new WebshopContext();
+
+        public async Task<ActionResult> Index()
         {
-            return View();
+            return View(await _context.Products.ToListAsync());
         }
 
         public ActionResult About()

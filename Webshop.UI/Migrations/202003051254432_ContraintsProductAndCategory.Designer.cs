@@ -7,13 +7,13 @@ namespace Webshop.UI.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.0")]
-    public sealed partial class TableContrainsProductAndCategory : IMigrationMetadata
+    public sealed partial class ContraintsProductAndCategory : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(TableContrainsProductAndCategory));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(ContraintsProductAndCategory));
         
         string IMigrationMetadata.Id
         {
-            get { return "202003041347572_TableContrainsProductAndCategory"; }
+            get { return "202003051254432_ContraintsProductAndCategory"; }
         }
         
         string IMigrationMetadata.Source

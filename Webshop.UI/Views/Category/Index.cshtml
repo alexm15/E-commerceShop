@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Webshop.UI.Models.Category>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<div class="row">
+    @foreach (var item in Model)
+    {
+        
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <a href="#@item.Id" data-toggle="collapse">@item.Name</a>
+        </div>
+        <div id="@item.Id" class="collapse panel-body row">
+            @foreach (var prod in item.Products)
+            {
+                @Html.Partial("_ProductCard", prod)
+            }
+        </div>
+    </div>
+        
+    }
+</div>

@@ -29,9 +29,6 @@ namespace Webshop.UI.App_Data
                 .Property(p => p.Name)
                 .HasMaxLength(1000)
                 .IsRequired();
-
-                
-
         }
     }
 }
