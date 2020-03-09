@@ -29,11 +29,14 @@ namespace Webshop.UI.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = await db.Products.FindAsync(id);
+            var product = await db.Products.FindAsync(id);
             if (product == null)
             {
                 return HttpNotFound();
             }
+
+
+
             return View(product);
         }
 
