@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -76,7 +77,14 @@ namespace Webshop.UI.Controllers
                 return HttpNotFound();
             }
 
-            var allCategories = await db.Categories.ToListAsync();
+            var allCategories = await db.Categories.Include(c => c.Products).ToListAsync();
+
+            var availableCategories = allCategories.Select(c => new AssignedCategoryData
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Assigned = c.Products.Contains(product)
+            });
 
             var productEditorViewModel = new ProductEditorViewModel()
             {
@@ -84,8 +92,7 @@ namespace Webshop.UI.Controllers
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
-                CurrentCategories = product.Categories,
-                AvailableCategories = allCategories
+                AvailableCategories = availableCategories
             };
 
 
@@ -106,7 +113,7 @@ namespace Webshop.UI.Controllers
                 return RedirectToAction("Index");
             }
 
-            product.AvailableCategories = await db.Categories.ToListAsync();
+            //product.AvailableCategories = await db.Categories.ToListAsync();
 
             return View(product);
         }
@@ -145,5 +152,12 @@ namespace Webshop.UI.Controllers
             }
             base.Dispose(disposing);
         }
+    }
+
+    public class AssignedCategoryData
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public bool Assigned { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Webshop.UI.Controllers;
 using Webshop.UI.Models;
 
 namespace Webshop.UI.ViewModels
@@ -15,6 +16,6 @@ namespace Webshop.UI.ViewModels
         [Required]
         public decimal Price { get; set; }
         public ICollection<Category> CurrentCategories { get; set; }
-        public List<Category> AvailableCategories { get; set; }
+        public IEnumerable<AssignedCategoryData> AvailableCategories { get; set; }
     }
 }
