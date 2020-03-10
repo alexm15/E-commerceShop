@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Webshop.UI.App_Data;
 using Webshop.UI.Models;
+using Webshop.UI.ViewModels;
 
 namespace Webshop.UI.Controllers
 {
@@ -70,12 +70,26 @@ namespace Webshop.UI.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = await db.Products.FindAsync(id);
+            var product = await db.Products.Include(p => p.Categories).FirstOrDefaultAsync(p => p.Id == id);
             if (product == null)
             {
                 return HttpNotFound();
             }
-            return View(product);
+
+            var allCategories = await db.Categories.ToListAsync();
+
+            var productEditorViewModel = new ProductEditorViewModel()
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                CurrentCategories = product.Categories,
+                AvailableCategories = allCategories
+            };
+
+
+            return View(productEditorViewModel);
         }
 
         // POST: Product/Edit/5
@@ -83,7 +97,7 @@ namespace Webshop.UI.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,Price")] Product product)
+        public async Task<ActionResult> Edit(ProductEditorViewModel product)
         {
             if (ModelState.IsValid)
             {
@@ -91,6 +105,9 @@ namespace Webshop.UI.Controllers
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
+
+            product.AvailableCategories = await db.Categories.ToListAsync();
+
             return View(product);
         }
 

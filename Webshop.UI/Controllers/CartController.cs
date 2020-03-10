@@ -9,7 +9,7 @@ namespace Webshop.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddToCart()
         {
-                        
+            return null;
         }
     }
 }
