@@ -16,6 +16,6 @@ namespace Webshop.UI.ViewModels
         [Required]
         public decimal Price { get; set; }
         public ICollection<Category> CurrentCategories { get; set; }
-        public IEnumerable<AssignedCategoryData> AvailableCategories { get; set; }
+        public IList<AssignedCategoryData> AvailableCategories { get; set; }
     }
 }

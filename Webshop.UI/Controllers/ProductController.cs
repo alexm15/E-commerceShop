@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
@@ -84,7 +85,7 @@ namespace Webshop.UI.Controllers
                 Id = c.Id,
                 Name = c.Name,
                 Assigned = c.Products.Contains(product)
-            });
+            }).ToList();
 
             var productEditorViewModel = new ProductEditorViewModel()
             {
@@ -104,18 +105,26 @@ namespace Webshop.UI.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(ProductEditorViewModel product)
+        public async Task<ActionResult> Edit(ProductEditorViewModel model)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(product).State = EntityState.Modified;
+                var product = new Product
+                {
+                    Id = model.Id,
+                    Name = model.Name,
+                    Description = model.Description,
+                    Price = model.Price,
+                    Categories = model.AvailableCategories.Where(c => c.Assigned)
+                        .Select(c => new Category {Id = c.Id, Name = c.Name}).ToList()
+                };
+                db.Entry(product)
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
-            //product.AvailableCategories = await db.Categories.ToListAsync();
 
-            return View(product);
+            return View(model);
         }
 
         // GET: Product/Delete/5
