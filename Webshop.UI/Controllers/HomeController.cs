@@ -11,8 +11,12 @@ namespace Webshop.UI.Controllers
 {
     public class HomeController : Controller
     {
-        private WebshopContext _context = new WebshopContext();
+        private readonly WebshopContext _context;
 
+        public HomeController(WebshopContext context)
+        {
+            _context = context;
+        }
         public async Task<ActionResult> Index()
         {
             return View(await _context.Products.ToListAsync());

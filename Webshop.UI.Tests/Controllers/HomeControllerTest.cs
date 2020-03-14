@@ -7,6 +7,7 @@ using ApprovalTests;
 using ApprovalTests.Reporters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Webshop.UI;
+using Webshop.UI.App_Data;
 using Webshop.UI.Controllers;
 
 namespace Webshop.UI.Tests.Controllers
@@ -32,7 +33,7 @@ namespace Webshop.UI.Tests.Controllers
         public void About()
         {
             // Arrange
-            HomeController controller = new HomeController();
+            HomeController controller = new HomeController(new WebshopContext());
 
             // Act
             ViewResult result = controller.About() as ViewResult;
@@ -45,7 +46,7 @@ namespace Webshop.UI.Tests.Controllers
         public void Contact()
         {
             // Arrange
-            HomeController controller = new HomeController();
+            HomeController controller = new HomeController(new WebshopContext());
 
             // Act
             ViewResult result = controller.Contact() as ViewResult;

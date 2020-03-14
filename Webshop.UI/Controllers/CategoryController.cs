@@ -14,12 +14,18 @@ namespace Webshop.UI.Controllers
 {
     public class CategoryController : Controller
     {
-        private WebshopContext db = new WebshopContext();
+        private readonly WebshopContext _context;
+
+        public CategoryController(WebshopContext context)
+        {
+            _context = context;
+        }
+        
 
         // GET: Category
         public async Task<ActionResult> Index()
         {
-            var categories = await db.Categories.Include(c => c.Products).ToListAsync();
+            var categories = await _context.Categories.Include(c => c.Products).ToListAsync();
 
             return View(categories);
         }
@@ -31,7 +37,7 @@ namespace Webshop.UI.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = await db.Categories.FindAsync(id);
+            Category category = await _context.Categories.FindAsync(id);
             if (category == null)
             {
                 return HttpNotFound();
@@ -54,8 +60,8 @@ namespace Webshop.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Categories.Add(category);
-                await db.SaveChangesAsync();
+                _context.Categories.Add(category);
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
@@ -69,7 +75,7 @@ namespace Webshop.UI.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = await db.Categories.FindAsync(id);
+            Category category = await _context.Categories.FindAsync(id);
             if (category == null)
             {
                 return HttpNotFound();
@@ -86,8 +92,8 @@ namespace Webshop.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(category).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                _context.Entry(category).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(category);
@@ -100,7 +106,7 @@ namespace Webshop.UI.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = await db.Categories.FindAsync(id);
+            Category category = await _context.Categories.FindAsync(id);
             if (category == null)
             {
                 return HttpNotFound();
@@ -113,9 +119,9 @@ namespace Webshop.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Category category = await db.Categories.FindAsync(id);
-            db.Categories.Remove(category);
-            await db.SaveChangesAsync();
+            Category category = await _context.Categories.FindAsync(id);
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
@@ -123,7 +129,7 @@ namespace Webshop.UI.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _context.Dispose();
             }
             base.Dispose(disposing);
         }

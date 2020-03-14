@@ -19,12 +19,17 @@ namespace Webshop.UI.Controllers
 {
     public class ProductController : Controller
     {
-        private WebshopContext db = new WebshopContext();
+        private readonly WebshopContext _context;
+
+        public ProductController(WebshopContext context)
+        {
+            _context = context;
+        }
 
         // GET: Product
         public async Task<ActionResult> Index()
         {
-            return View(await db.Products.ToListAsync());
+            return View(await _context.Products.ToListAsync());
         }
 
         // GET: Product/Details/5
@@ -34,7 +39,7 @@ namespace Webshop.UI.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var product = await db.Products.FindAsync(id);
+            var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -60,8 +65,8 @@ namespace Webshop.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Products.Add(product);
-                await db.SaveChangesAsync();
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
@@ -75,13 +80,13 @@ namespace Webshop.UI.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var product = await db.Products.Include(p => p.Categories).FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _context.Products.Include(p => p.Categories).FirstOrDefaultAsync(p => p.Id == id);
             if (product == null)
             {
                 return HttpNotFound();
             }
 
-            var allCategories = await db.Categories.Include(c => c.Products).ToListAsync();
+            var allCategories = await _context.Categories.Include(c => c.Products).ToListAsync();
 
             var availableCategories = allCategories.Select(c => new AssignedCategoryData
             {
@@ -112,7 +117,7 @@ namespace Webshop.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var dbProduct = await db.Products.Include(p => p.Categories).FirstOrDefaultAsync(p => p.Id == model.Id);
+                var dbProduct = await _context.Products.Include(p => p.Categories).FirstOrDefaultAsync(p => p.Id == model.Id);
                 if (dbProduct == null)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -125,7 +130,7 @@ namespace Webshop.UI.Controllers
 
                 UpdateProduct(model, dbProduct);
                 
-                await db.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
@@ -136,7 +141,7 @@ namespace Webshop.UI.Controllers
         private void UpdateProduct(ProductEditorViewModel model, Product dbProduct)
         {
             var selectedCategoryIds = new HashSet<int>(model.AvailableCategories.Where(c => c.Assigned).Select(c => c.Id));
-            foreach (var dbCategory in db.Categories)
+            foreach (var dbCategory in _context.Categories)
             {
                 if (selectedCategoryIds.Contains(dbCategory.Id))
                 {
@@ -162,7 +167,7 @@ namespace Webshop.UI.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = await db.Products.FindAsync(id);
+            Product product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -175,9 +180,9 @@ namespace Webshop.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Product product = await db.Products.FindAsync(id);
-            db.Products.Remove(product);
-            await db.SaveChangesAsync();
+            Product product = await _context.Products.FindAsync(id);
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
@@ -185,7 +190,7 @@ namespace Webshop.UI.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _context.Dispose();
             }
             base.Dispose(disposing);
         }
