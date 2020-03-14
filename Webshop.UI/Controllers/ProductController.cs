@@ -10,6 +10,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Web;
 using System.Web.Http.Results;
 using System.Web.Mvc;
+using AutoMapper;
 using WebGrease.Css.Extensions;
 using Webshop.UI.App_Data;
 using Webshop.UI.Models;
@@ -20,10 +21,12 @@ namespace Webshop.UI.Controllers
     public class ProductController : Controller
     {
         private readonly WebshopContext _context;
+        private IMapper _mapper;
 
-        public ProductController(WebshopContext context)
+        public ProductController(WebshopContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Product
@@ -95,17 +98,10 @@ namespace Webshop.UI.Controllers
                 Assigned = c.Products.Contains(product)
             }).ToList();
 
-            var productEditorViewModel = new ProductEditorViewModel()
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                AvailableCategories = availableCategories
-            };
+            var viewModel = _mapper.Map<ProductEditorViewModel>(product);
+            viewModel.AvailableCategories = availableCategories;
 
-
-            return View(productEditorViewModel);
+            return View(viewModel);
         }
 
         // POST: Product/Edit/5
