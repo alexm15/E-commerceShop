@@ -6,8 +6,11 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
+using System.Runtime.Remoting.Messaging;
 using System.Web;
+using System.Web.Http.Results;
 using System.Web.Mvc;
+using WebGrease.Css.Extensions;
 using Webshop.UI.App_Data;
 using Webshop.UI.Models;
 using Webshop.UI.ViewModels;
@@ -109,22 +112,47 @@ namespace Webshop.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var product = new Product
+                var dbProduct = await db.Products.Include(p => p.Categories).FirstOrDefaultAsync(p => p.Id == model.Id);
+                if (dbProduct == null)
                 {
-                    Id = model.Id,
-                    Name = model.Name,
-                    Description = model.Description,
-                    Price = model.Price,
-                    Categories = model.AvailableCategories.Where(c => c.Assigned)
-                        .Select(c => new Category {Id = c.Id, Name = c.Name}).ToList()
-                };
-                db.Entry(product)
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+
+                dbProduct.Id = model.Id;
+                dbProduct.Name = model.Name;
+                dbProduct.Description = model.Description;
+                dbProduct.Price = model.Price;
+
+                UpdateProduct(model, dbProduct);
+                
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
 
             return View(model);
+        }
+
+        private void UpdateProduct(ProductEditorViewModel model, Product dbProduct)
+        {
+            var selectedCategoryIds = new HashSet<int>(model.AvailableCategories.Where(c => c.Assigned).Select(c => c.Id));
+            foreach (var dbCategory in db.Categories)
+            {
+                if (selectedCategoryIds.Contains(dbCategory.Id))
+                {
+                    if (!dbProduct.Categories.Contains(dbCategory))
+                    {
+                        dbProduct.Categories.Add(dbCategory);
+                    }
+                }
+                else
+                {
+                    if (dbProduct.Categories.Contains(dbCategory))
+                    {
+                        dbProduct.Categories.Remove(dbCategory);
+                    }
+                }
+            }
         }
 
         // GET: Product/Delete/5
@@ -160,6 +188,14 @@ namespace Webshop.UI.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+    }
+
+    public class Logger
+    {
+        public static void Log(string obj)
+        {
+            Console.WriteLine(obj);
         }
     }
 
