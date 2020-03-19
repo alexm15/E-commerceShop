@@ -3,3 +3,8 @@
 # E-commerceShop
 
 This is a project containing multiple ASP.NET technologies including ASP.NET MVC, ASP.NET WebAPI
+
+This project is divided into the following systems:
+- ## PIM system
+- ## Catalog/Webshop
+
