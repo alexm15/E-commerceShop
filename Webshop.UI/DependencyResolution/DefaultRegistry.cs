@@ -21,6 +21,7 @@ using System.Linq;
 using AutoMapper;
 using E_commerce.Data;
 using StructureMap;
+using Webshop.UI.Controllers;
 
 namespace Webshop.UI.DependencyResolution
 {
@@ -62,6 +63,8 @@ namespace Webshop.UI.DependencyResolution
                     scan.With(new ControllerConvention());
                 });
             For<WebshopContext>().Use<WebshopContext>().Transient();
+            For<CategoryRepository>().Use<CategoryRepository>().Transient();
+            For<ProductRepository>().Use<ProductRepository>().Transient();
         }
 
         #endregion

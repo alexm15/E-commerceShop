@@ -23,18 +23,22 @@ namespace Webshop.UI.Controllers
     {
         private readonly WebshopContext _context;
         private IMapper _mapper;
+        private readonly ProductRepository _repo;
 
-        public ProductController(WebshopContext context, IMapper mapper)
+        public ProductController(WebshopContext context, IMapper mapper, ProductRepository repo)
         {
             _context = context;
             _mapper = mapper;
+            _repo = repo;
         }
 
         // GET: Product
         public async Task<ActionResult> Index()
         {
-            return View(await _context.Products.ToListAsync());
+            return View(await _repo.GetProductsAsync());
         }
+
+
 
         // GET: Product/Details/5
         public async Task<ActionResult> Details(int? id)
@@ -44,7 +48,7 @@ namespace Webshop.UI.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = await _repo.GetProductAsync(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -70,42 +74,28 @@ namespace Webshop.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Products.Add(product);
-                await _context.SaveChangesAsync();
+                await _repo.CreateAsync(product);
                 return RedirectToAction("Index");
             }
 
             return View(product);
         }
 
+
+
         // GET: Product/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            _context.Configuration.ProxyCreationEnabled = false;
-            var product = await _context.Products
-                .Include(p => p.Categories)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _repo.GetProductAsync(id);
             if (product == null) return HttpNotFound();
-
-
             
-
             var viewModel = _mapper.Map<ProductEditorViewModel>(product);
 
-            var allCategories = _context.Categories.Include(category => category.Products)
+            viewModel.AvailableCategories = _context.Categories.Include(category => category.Products)
                 .ProjectTo<AssignedCategoryData>(_mapper.ConfigurationProvider, new {currentProduct = product})
                 .ToList();
-            //var availableCategories = allCategories.Select(category => new AssignedCategoryData
-            //{
-            //    Id = category.Id,
-            //    Name = category.Name,
-            //    Assigned = category.Products.Contains(product)
-            //}).ToList();
-            
-
-            viewModel.AvailableCategories = allCategories;
 
             return View(viewModel);
         }
@@ -119,8 +109,7 @@ namespace Webshop.UI.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var dbProduct = await _context.Products.Include(p => p.Categories)
-                .FirstOrDefaultAsync(p => p.Id == model.Id);
+            var dbProduct = await _repo.GetProductAsync(model.Id);
             if (dbProduct == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             dbProduct.Id = model.Id;
@@ -128,41 +117,23 @@ namespace Webshop.UI.Controllers
             dbProduct.Description = model.Description;
             dbProduct.Price = model.Price;
 
-            UpdateProduct(model, dbProduct);
+            var selectedCategoryIds = new HashSet<int>(model.AvailableCategories.Where(c => c.Assigned).Select(c => c.Id));
+            await _repo.UpdateProduct(dbProduct, selectedCategoryIds);
 
-            await _context.SaveChangesAsync();
+            
             return RedirectToAction("Index");
         }
 
-        private void UpdateProduct(ProductEditorViewModel model, Product dbProduct)
-        {
-            var selectedCategoryIds =
-                new HashSet<int>(model.AvailableCategories.Where(c => c.Assigned).Select(c => c.Id));
-            foreach (var dbCategory in _context.Categories)
-            {
-                if (selectedCategoryIds.Contains(dbCategory.Id))
-                {
-                    if (!dbProduct.Categories.Contains(dbCategory))
-                    {
-                        dbProduct.Categories.Add(dbCategory);
-                    }
-                }
-                else
-                {
-                    if (dbProduct.Categories.Contains(dbCategory))
-                    {
-                        dbProduct.Categories.Remove(dbCategory);
-                    }
-                }
-            }
-        }
+
+
+        
 
         // GET: Product/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var product = await _context.Products.FindAsync(id);
+            var product = await _repo.GetProductAsync(id);
             if (product == null) return HttpNotFound();
 
             return View(product);
@@ -173,22 +144,8 @@ namespace Webshop.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null) return HttpNotFound();
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            await _repo.DeleteAsync(id);
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _context.Dispose();
-            }
-
-            base.Dispose(disposing);
         }
     }
 }
