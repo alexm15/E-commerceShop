@@ -1,7 +1,7 @@
 using System.Data.Entity;
 using E_commerce.Library;
 
-namespace Webshop.UI.App_Data
+namespace E_commerce.Data
 {
     public class WebshopContext : DbContext
     {

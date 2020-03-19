@@ -7,7 +7,6 @@ using ApprovalTests;
 using ApprovalTests.Reporters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Webshop.UI;
-using Webshop.UI.App_Data;
 using Webshop.UI.Controllers;
 
 namespace Webshop.UI.Tests.Controllers

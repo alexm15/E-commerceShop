@@ -1,5 +1,5 @@
-﻿using E_commerce.Library;
-using Webshop.UI.App_Data;
+﻿using E_commerce.Data;
+using E_commerce.Library;
 
 namespace Webshop.UI.Migrations
 {

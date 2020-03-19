@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using Webshop.UI.App_Data;
+using E_commerce.Data;
 
 namespace Webshop.UI.Controllers
 {

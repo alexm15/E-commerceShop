@@ -11,10 +11,10 @@ using System.Web.Http.Results;
 using System.Web.Mvc;
 using AutoMapper;
 using WebGrease.Css.Extensions;
-using Webshop.UI.App_Data;
 using Webshop.UI.ViewModels;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using E_commerce.Data;
 using E_commerce.Library;
 
 namespace Webshop.UI.Controllers

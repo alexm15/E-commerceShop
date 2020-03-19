@@ -19,8 +19,8 @@ using System;
 using System.Data.Entity;
 using System.Linq;
 using AutoMapper;
+using E_commerce.Data;
 using StructureMap;
-using Webshop.UI.App_Data;
 
 namespace Webshop.UI.DependencyResolution
 {
