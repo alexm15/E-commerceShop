@@ -1,4 +1,6 @@
+using System.Configuration;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using E_commerce.Library;
 
 namespace E_commerce.Data
@@ -9,6 +11,7 @@ namespace E_commerce.Data
             : base("name=WebshopContext")
         {
         }
+
 
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Product> Products { get; set; }

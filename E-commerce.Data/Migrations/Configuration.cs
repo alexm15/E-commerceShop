@@ -1,13 +1,9 @@
-﻿using E_commerce.Data;
+﻿using System.Data.Entity.Migrations;
+using System.Linq;
 using E_commerce.Library;
 
-namespace Webshop.UI.Migrations
+namespace E_commerce.Data.Migrations
 {
-    using System;
-    using System.Data.Entity;
-    using System.Data.Entity.Migrations;
-    using System.Linq;
-
     internal sealed class Configuration : DbMigrationsConfiguration<WebshopContext>
     {
         public Configuration()

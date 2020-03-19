@@ -42,6 +42,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -51,6 +52,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Migrations\202003051252407_Initial.cs" />
+    <Compile Include="Migrations\202003051252407_Initial.Designer.cs">
+      <DependentUpon>202003051252407_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003051254432_ContraintsProductAndCategory.cs" />
+    <Compile Include="Migrations\202003051254432_ContraintsProductAndCategory.Designer.cs">
+      <DependentUpon>202003051254432_ContraintsProductAndCategory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebshopContext.cs" />
   </ItemGroup>
@@ -63,6 +73,14 @@
       <Project>{901099d7-225e-4b3c-b0b0-e2c9c2d9e434}</Project>
       <Name>E-commerce.Library</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202003051252407_Initial.resx">
+      <DependentUpon>202003051252407_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003051254432_ContraintsProductAndCategory.resx">
+      <DependentUpon>202003051254432_ContraintsProductAndCategory.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

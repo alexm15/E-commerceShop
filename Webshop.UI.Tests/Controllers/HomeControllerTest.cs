@@ -5,6 +5,7 @@ using System.Text;
 using System.Web.Mvc;
 using ApprovalTests;
 using ApprovalTests.Reporters;
+using E_commerce.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Webshop.UI;
 using Webshop.UI.Controllers;

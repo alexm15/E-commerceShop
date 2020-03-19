@@ -1,8 +1,7 @@
-﻿namespace Webshop.UI.Migrations
+﻿using System.Data.Entity.Migrations;
+
+namespace E_commerce.Data.Migrations
 {
-    using System;
-    using System.Data.Entity.Migrations;
-    
     public partial class Initial : DbMigration
     {
         public override void Up()

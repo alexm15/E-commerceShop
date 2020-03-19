@@ -187,15 +187,6 @@
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Mappers\ViewModelMapperProfile.cs" />
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />
-    <Compile Include="Migrations\202003051252407_Initial.cs" />
-    <Compile Include="Migrations\202003051252407_Initial.designer.cs">
-      <DependentUpon>202003051252407_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202003051254432_ContraintsProductAndCategory.cs" />
-    <Compile Include="Migrations\202003051254432_ContraintsProductAndCategory.designer.cs">
-      <DependentUpon>202003051254432_ContraintsProductAndCategory.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -262,14 +253,6 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202003051252407_Initial.resx">
-      <DependentUpon>202003051252407_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202003051254432_ContraintsProductAndCategory.resx">
-      <DependentUpon>202003051254432_ContraintsProductAndCategory.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
