@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
@@ -15,6 +14,8 @@ using WebGrease.Css.Extensions;
 using Webshop.UI.App_Data;
 using Webshop.UI.Models;
 using Webshop.UI.ViewModels;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 namespace Webshop.UI.Controllers
 {
@@ -42,12 +43,12 @@ namespace Webshop.UI.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 return HttpNotFound();
             }
-
 
 
             return View(product);
@@ -64,7 +65,8 @@ namespace Webshop.UI.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description,Price")] Product product)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description,Price")]
+            Product product)
         {
             if (ModelState.IsValid)
             {
@@ -79,27 +81,31 @@ namespace Webshop.UI.Controllers
         // GET: Product/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var product = await _context.Products.Include(p => p.Categories).FirstOrDefaultAsync(p => p.Id == id);
-            if (product == null)
-            {
-                return HttpNotFound();
-            }
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var allCategories = await _context.Categories.Include(c => c.Products).ToListAsync();
+            _context.Configuration.ProxyCreationEnabled = false;
+            var product = await _context.Products
+                .Include(p => p.Categories)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            if (product == null) return HttpNotFound();
 
-            var availableCategories = allCategories.Select(c => new AssignedCategoryData
-            {
-                Id = c.Id,
-                Name = c.Name,
-                Assigned = c.Products.Contains(product)
-            }).ToList();
+
+            
 
             var viewModel = _mapper.Map<ProductEditorViewModel>(product);
-            viewModel.AvailableCategories = availableCategories;
+
+            var allCategories = _context.Categories.Include(category => category.Products)
+                .ProjectTo<AssignedCategoryData>(_mapper.ConfigurationProvider, new {currentProduct = product})
+                .ToList();
+            //var availableCategories = allCategories.Select(category => new AssignedCategoryData
+            //{
+            //    Id = category.Id,
+            //    Name = category.Name,
+            //    Assigned = category.Products.Contains(product)
+            //}).ToList();
+            
+
+            viewModel.AvailableCategories = allCategories;
 
             return View(viewModel);
         }
@@ -111,32 +117,27 @@ namespace Webshop.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(ProductEditorViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var dbProduct = await _context.Products.Include(p => p.Categories).FirstOrDefaultAsync(p => p.Id == model.Id);
-                if (dbProduct == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
+            if (!ModelState.IsValid) return View(model);
 
-                dbProduct.Id = model.Id;
-                dbProduct.Name = model.Name;
-                dbProduct.Description = model.Description;
-                dbProduct.Price = model.Price;
+            var dbProduct = await _context.Products.Include(p => p.Categories)
+                .FirstOrDefaultAsync(p => p.Id == model.Id);
+            if (dbProduct == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-                UpdateProduct(model, dbProduct);
-                
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
+            dbProduct.Id = model.Id;
+            dbProduct.Name = model.Name;
+            dbProduct.Description = model.Description;
+            dbProduct.Price = model.Price;
 
+            UpdateProduct(model, dbProduct);
 
-            return View(model);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
 
         private void UpdateProduct(ProductEditorViewModel model, Product dbProduct)
         {
-            var selectedCategoryIds = new HashSet<int>(model.AvailableCategories.Where(c => c.Assigned).Select(c => c.Id));
+            var selectedCategoryIds =
+                new HashSet<int>(model.AvailableCategories.Where(c => c.Assigned).Select(c => c.Id));
             foreach (var dbCategory in _context.Categories)
             {
                 if (selectedCategoryIds.Contains(dbCategory.Id))
@@ -159,15 +160,11 @@ namespace Webshop.UI.Controllers
         // GET: Product/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Product product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return HttpNotFound();
-            }
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var product = await _context.Products.FindAsync(id);
+            if (product == null) return HttpNotFound();
+
             return View(product);
         }
 
@@ -176,7 +173,9 @@ namespace Webshop.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Product product = await _context.Products.FindAsync(id);
+            var product = await _context.Products.FindAsync(id);
+            if (product == null) return HttpNotFound();
+
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
@@ -188,22 +187,8 @@ namespace Webshop.UI.Controllers
             {
                 _context.Dispose();
             }
+
             base.Dispose(disposing);
         }
-    }
-
-    public class Logger
-    {
-        public static void Log(string obj)
-        {
-            Console.WriteLine(obj);
-        }
-    }
-
-    public class AssignedCategoryData
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public bool Assigned { get; set; }
     }
 }
