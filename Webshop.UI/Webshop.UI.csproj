@@ -196,12 +196,10 @@
       <DependentUpon>202003051254432_ContraintsProductAndCategory.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Category.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Data\WebshopContext.cs" />
   </ItemGroup>
@@ -277,6 +275,13 @@
   <ItemGroup>
     <Folder Include="Content\Images\" />
     <Folder Include="Infrastructure\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\E-commerce.Library\E-commerce.Library.csproj">
+      <Project>{901099d7-225e-4b3c-b0b0-e2c9c2d9e434}</Project>
+      <Name>E-commerce.Library</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Webshop.UI.Models
+namespace E_commerce.Library
 {
     public class Category
     {

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using E_commerce.Library;
 using Webshop.UI.App_Data;
-using Webshop.UI.Models;
 
 namespace Webshop.UI.Controllers
 {

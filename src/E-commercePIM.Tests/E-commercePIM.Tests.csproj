@@ -99,6 +99,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\E-commerce.Library\E-commerce.Library.csproj">
+      <Project>{901099d7-225e-4b3c-b0b0-e2c9c2d9e434}</Project>
+      <Name>E-commerce.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\E-commercePIM\E-commercePIM.csproj">
       <Project>{BD928A30-D8DC-454B-95DE-1C29B4D4B218}</Project>
       <Name>E-commercePIM</Name>

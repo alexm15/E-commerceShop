@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using E_commerce.Library;
 using Webshop.UI.Controllers;
-using Webshop.UI.Models;
 
 namespace Webshop.UI.ViewModels
 {

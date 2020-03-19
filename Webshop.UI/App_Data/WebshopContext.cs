@@ -1,5 +1,5 @@
 using System.Data.Entity;
-using Webshop.UI.Models;
+using E_commerce.Library;
 
 namespace Webshop.UI.App_Data
 {
