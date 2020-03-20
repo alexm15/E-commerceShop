@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using E_commerce.Library;
+using E_commercePIM.ViewModels;
 
 namespace E_commercePIM.Mapping
 {
@@ -7,7 +8,7 @@ namespace E_commercePIM.Mapping
     {
         public ViewModelsProfile()
         {
-            
+            CreateMap<Product, ProductEditorViewModel>();
         }
     }
 }

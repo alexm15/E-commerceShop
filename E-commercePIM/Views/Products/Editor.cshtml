@@ -1,4 +1,4 @@
-﻿@model E_commerce.Library.Product
+﻿@model E_commercePIM.ViewModels.ProductEditorViewModel
 
 @{
     ViewBag.Title = "Product Editor";
@@ -44,13 +44,8 @@
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                <label>Categories (hold ctrl to select more than one):</label>
-                <select multiple class="form-control" id="sel2">
-                    <option selected>Electronics</option>
-                    <option>Books</option>
-                    <option>Movies & TV-shows</option>
-                    <option selected>Office Supplies</option>
-                </select>
+                @Html.LabelFor(model => model.SelectedCategories, "Categories (hold ctrl to select more than one):")
+                @Html.ListBoxFor(model => model.SelectedCategories, Model.AvailableCategories, new {@class = "form-control"})
             </div>
         </div>
 
