@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
+using AutoMapper;
 using E_commerce.Data;
 
 namespace E_commercePIM
@@ -19,6 +20,23 @@ namespace E_commercePIM
             
             builder.RegisterType(typeof(ProductRepository)).InstancePerDependency();
 
+            var assemblyNames = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .Where(t => typeof(Profile).IsAssignableFrom(t) && t.IsPublic && !t.IsAbstract);
+
+
+            var autoMapperProfiles = assemblyNames
+                .Select(p => (Profile)Activator.CreateInstance(p)).ToList();
+
+            builder.Register(ctx => new MapperConfiguration(cfg =>
+            {
+                foreach (var profile in autoMapperProfiles)
+                {
+                    cfg.AddProfile(profile);
+                }
+            }));
+
+            builder.Register(ctx => ctx.Resolve<MapperConfiguration>().CreateMapper()).As<IMapper>().InstancePerLifetimeScope();
 
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));

@@ -13,8 +13,6 @@ namespace E_commercePIM.Controllers
     {
         private readonly ProductRepository _repository;
 
-        //public ProductsController() : this(new ProductRepository(new WebshopContext())) { }
-
         public ProductsController(ProductRepository repository)
         {
             _repository = repository;
