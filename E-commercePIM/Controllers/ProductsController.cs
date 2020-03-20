@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using E_commerce.Data;
+using E_commerce.Library;
 
 namespace E_commercePIM.Controllers
 {
@@ -30,5 +31,12 @@ namespace E_commercePIM.Controllers
             var product = await _repository.GetProductAsync(id);
             return View(product);
         }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> Editor(Product product)
+        {
+            return !ModelState.IsValid ? View(product) : null;
+        }
+
     }
 }
