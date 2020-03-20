@@ -10,8 +10,6 @@ namespace Webshop.UI.Mappers
         public ViewModelMapperProfile()
         {
             CreateMap<Product, ProductEditorViewModel>();
-            
-            
             CreateMap<Category, AssignedCategoryData>();
         }
     }
