@@ -118,7 +118,7 @@ namespace Webshop.UI.Controllers
             dbProduct.Price = model.Price;
 
             var selectedCategoryIds = new HashSet<int>(model.AvailableCategories.Where(c => c.Assigned).Select(c => c.Id));
-            await _repo.UpdateProduct(dbProduct, selectedCategoryIds);
+            await _repo.AddOrUpdateProduct(dbProduct, selectedCategoryIds);
 
             
             return RedirectToAction("Index");

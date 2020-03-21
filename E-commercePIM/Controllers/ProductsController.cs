@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -40,6 +41,7 @@ namespace E_commercePIM.Controllers
             return View(model);
         }
 
+
         private IEnumerable<SelectListItem> PopulateCategories(Product product)
         {
             var categories = _context.Categories
@@ -64,7 +66,7 @@ namespace E_commercePIM.Controllers
                 return View(model);
             }
             product = _mapper.Map(model, product);
-            await _repository.UpdateProduct(product, new HashSet<int>(model.SelectedCategories));
+            await _repository.AddOrUpdateProduct(product, new HashSet<int>(model.SelectedCategories));
             return RedirectToAction(nameof(Index));
         }
 

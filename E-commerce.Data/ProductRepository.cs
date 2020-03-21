@@ -28,28 +28,34 @@ namespace E_commerce.Data
 
         public async Task<Product> GetProductAsync(int? id)
         {
+            if (id == 0)
+            {
+                return new Product();
+            }
             _context.Configuration.ProxyCreationEnabled = false;
             var dbProduct = await _context.Products.Include(p => p.Categories)
                 .FirstOrDefaultAsync(p => p.Id == id);
             return dbProduct;
         }
 
-        public async Task UpdateProduct(Product dbProduct, ICollection<int> selectedCategoryIds)
+        public async Task AddOrUpdateProduct(Product product, ICollection<int> selectedCategoryIds)
         {
+            if (product.Id == 0) _context.Products.Add(product);
+            
             foreach (var dbCategory in _context.Categories)
             {
                 if (selectedCategoryIds.Contains(dbCategory.Id))
                 {
-                    if (!dbProduct.Categories.Contains(dbCategory))
+                    if (!product.Categories.Contains(dbCategory))
                     {
-                        dbProduct.Categories.Add(dbCategory);
+                        product.Categories.Add(dbCategory);
                     }
                 }
                 else
                 {
-                    if (dbProduct.Categories.Contains(dbCategory))
+                    if (product.Categories.Contains(dbCategory))
                     {
-                        dbProduct.Categories.Remove(dbCategory);
+                        product.Categories.Remove(dbCategory);
                     }
                 }
             }
