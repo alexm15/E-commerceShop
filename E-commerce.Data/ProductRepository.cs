@@ -28,10 +28,7 @@ namespace E_commerce.Data
 
         public async Task<Product> GetProductAsync(int? id)
         {
-            if (id == 0)
-            {
-                return new Product();
-            }
+            if (id == 0) return new Product();
             _context.Configuration.ProxyCreationEnabled = false;
             var dbProduct = await _context.Products.Include(p => p.Categories)
                 .FirstOrDefaultAsync(p => p.Id == id);

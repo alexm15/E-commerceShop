@@ -10,6 +10,9 @@ namespace E_commercePIM.Mapping
         {
             CreateMap<Product, ProductEditorViewModel>();
             CreateMap<ProductEditorViewModel, Product>();
+
+            CreateMap<Category, CategoryEditorViewModel>();
+            CreateMap<CategoryEditorViewModel, Category>();
         }
     }
 }

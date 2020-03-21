@@ -148,6 +148,7 @@
     <Compile Include="App_Start\ContainerConfig.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="ViewModels\CategoryEditorViewModel.cs" />
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Global.asax.cs">
