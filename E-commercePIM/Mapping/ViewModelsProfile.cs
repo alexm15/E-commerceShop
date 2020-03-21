@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using AutoMapper;
 using E_commerce.Library;
+using E_commercePIM.Controllers;
 using E_commercePIM.ViewModels;
 
 namespace E_commercePIM.Mapping
@@ -13,6 +15,8 @@ namespace E_commercePIM.Mapping
 
             CreateMap<Category, CategoryEditorViewModel>();
             CreateMap<CategoryEditorViewModel, Category>();
+
+            CreateMap<Category, CategoryDataViewModel>();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<E_commerce.Library.Category>
+﻿@model E_commercePIM.Controllers.CategoryIndexViewModel
 
 @{
     ViewBag.Title = "Index";
@@ -12,18 +12,24 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            Name
+        </th>
+        <th>
+            Products in Category
         </th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            <a href="@Url.Action("Editor", new {id = item.Id})">
-                @Html.DisplayFor(modelItem => item.Name)
-            </a>
-        </td>
-    </tr>
+@foreach (var item in Model.Categories) {
+<tr>
+    <td>
+        <a href="@Url.Action("Editor", new {id = item.Id})">
+            @Html.DisplayFor(modelItem => item.Name)
+        </a>
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.ProductCount)
+    </td>
+</tr>
 }
 
 </table>

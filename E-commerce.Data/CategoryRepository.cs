@@ -70,5 +70,10 @@ namespace E_commerce.Data
             await _context.SaveChangesAsync();
 
         }
+
+        public int GetProductCount(int categoryId)
+        {
+            return _context.Categories.Include(c => c.Products).FirstOrDefault(c => c.Id == categoryId).Products.Count;
+        }
     }
 }

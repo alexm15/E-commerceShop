@@ -8,6 +8,7 @@ using AutoMapper;
 using E_commerce.Data;
 using E_commerce.Library;
 using E_commercePIM.ViewModels;
+using WebGrease.Css.Extensions;
 
 namespace E_commercePIM.Controllers
 {
@@ -27,7 +28,14 @@ namespace E_commercePIM.Controllers
         // GET: Categories
         public async Task<ActionResult> Index()
         {
-            return View(await _categoryRepository.GetCategoriesAsync());
+            var categories = await _categoryRepository.GetCategoriesAsync();
+            var model = new CategoryIndexViewModel
+            {
+                Categories = _mapper.Map<List<CategoryDataViewModel>>(categories)
+            };
+            model.Categories.ForEach(c => c.ProductCount = _categoryRepository.GetProductCount(c.Id));
+
+            return View(model);
         }
 
         public async Task<ActionResult> Editor(int id)
@@ -71,5 +79,19 @@ namespace E_commercePIM.Controllers
             await _categoryRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
+    }
+
+    public class CategoryIndexViewModel
+    {
+        public IEnumerable<CategoryDataViewModel> Categories { get; set; } = new List<CategoryDataViewModel>();
+    }
+
+    public class CategoryDataViewModel
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public int ProductCount { get; set; }
     }
 }
