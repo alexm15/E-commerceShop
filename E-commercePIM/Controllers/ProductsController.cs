@@ -70,5 +70,10 @@ namespace E_commercePIM.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<ActionResult> Delete(int id)
+        {
+            await _repository.DeleteAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
