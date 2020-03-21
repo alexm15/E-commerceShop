@@ -4,7 +4,7 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Available Products</h2>
 
 <p>
     @Html.ActionLink("Create New", "Editor", new {id = 0})
@@ -17,19 +17,17 @@
         <th>
             @Html.DisplayNameFor(model => model.Price)
         </th>
-        <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Name)
+            <a href="@Url.Action("Editor", new {id = item.Id})">
+                @Html.DisplayFor(modelItem => item.Name)
+            </a>
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Price)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Editor", new { id=item.Id })
         </td>
     </tr>
 }
