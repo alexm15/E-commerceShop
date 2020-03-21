@@ -19,6 +19,7 @@ namespace E_commercePIM
             builder.RegisterType(typeof(WebshopContext)).InstancePerLifetimeScope();
             
             builder.RegisterType(typeof(ProductRepository)).InstancePerDependency();
+            builder.RegisterType(typeof(CategoryRepository)).InstancePerDependency();
 
             var assemblyNames = Assembly.GetExecutingAssembly()
                 .GetTypes()

@@ -1,0 +1,29 @@
+﻿@model IEnumerable<E_commerce.Library.Category>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            <a href="@Url.Action("Editor", new {id = item.Id})">
+                @Html.DisplayFor(modelItem => item.Name)
+            </a>
+        </td>
+    </tr>
+}
+
+</table>
