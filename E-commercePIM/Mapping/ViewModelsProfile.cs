@@ -9,6 +9,7 @@ namespace E_commercePIM.Mapping
         public ViewModelsProfile()
         {
             CreateMap<Product, ProductEditorViewModel>();
+            CreateMap<ProductEditorViewModel, Product>();
         }
     }
 }

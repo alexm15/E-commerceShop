@@ -35,25 +35,37 @@ namespace E_commercePIM.Controllers
         {
             var product = await _repository.GetProductAsync(id);
             var model = _mapper.Map<ProductEditorViewModel>(product);
+            
+            model.AvailableCategories = PopulateCategories(product);
+            return View(model);
+        }
 
+        private IEnumerable<SelectListItem> PopulateCategories(Product product)
+        {
             var categories = _context.Categories
                 .Include(c => c.Products).ToList();
-            model.AvailableCategories = categories
+            return categories
                 .Select(c => new SelectListItem
                 {
-                    Value = c.Id.ToString(), 
+                    Value = c.Id.ToString(),
                     Text = c.Name,
                     Selected = c.Products.Contains(product)
                 })
                 .ToList();
-
-            return View(model);
         }
 
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<ActionResult> Editor(ProductEditorViewModel model)
         {
-            return !ModelState.IsValid ? View(model) : null;
+            var product = await _repository.GetProductAsync(model.Id);
+            if (!ModelState.IsValid)
+            {
+                model.AvailableCategories = PopulateCategories(product);
+                return View(model);
+            }
+            product = _mapper.Map(model, product);
+            await _repository.UpdateProduct(product, new HashSet<int>(model.SelectedCategories));
+            return RedirectToAction(nameof(Index));
         }
 
     }
