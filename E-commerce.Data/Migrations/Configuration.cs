@@ -4,7 +4,7 @@ using E_commerce.Library;
 
 namespace E_commerce.Data.Migrations
 {
-    internal sealed class Configuration : DbMigrationsConfiguration<WebshopContext>
+    public sealed class Configuration : DbMigrationsConfiguration<WebshopContext>
     {
         public Configuration()
         {
