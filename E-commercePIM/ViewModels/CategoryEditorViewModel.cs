@@ -12,7 +12,7 @@ namespace E_commercePIM.ViewModels
         [Required]
         public string Name { get; set; }
 
-        public IEnumerable<int> ProductsInCategory { get; set; }
-        public IEnumerable<SelectListItem> AvailableProducts { get; set; }
+        public IEnumerable<int> ProductsInCategory { get; set; } = new List<int>();
+        public IEnumerable<SelectListItem> AvailableProducts { get; set; } = new List<SelectListItem>();
     }
 }

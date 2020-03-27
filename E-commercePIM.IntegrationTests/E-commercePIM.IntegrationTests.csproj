@@ -101,7 +101,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DatabaseFixture.cs" />
+    <Compile Include="CategoriesControllerIT.cs" />
+    <Compile Include="IntegrationTestBase.cs" />
     <Compile Include="ProductsControllerIT.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

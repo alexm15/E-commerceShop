@@ -13,15 +13,12 @@ using Xunit;
 
 namespace E_commercePIM.IntegrationTests
 {
-    public class ProductsControllerIT : DatabaseFixture
+    public class ProductsControllerIT : IntegrationTestBase
     {
-        private IMapper _mapper;
         private ProductsController _productsController;
 
         public ProductsControllerIT()
         {
-            var config = new MapperConfiguration(opts => { opts.AddProfile(new ViewModelsProfile()); });
-            _mapper = config.CreateMapper();
             _productsController = new ProductsController(new ProductRepository(_context), _mapper, _context);
         }
 
@@ -104,6 +101,7 @@ namespace E_commercePIM.IntegrationTests
         {
             //See seeded data in Configuration class (called from super class)
             var dbProduct = _context.Products.FirstOrDefault(p => p.Name.Equals("ASUS X554L Laptop"));
+            Assert.NotNull(dbProduct);
             await _productsController.Delete(dbProduct.Id);
 
             var result = await _productsController.Index() as ViewResult;
