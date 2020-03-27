@@ -11,6 +11,11 @@ namespace E_commerce.Data.Migrations
             AutomaticMigrationsEnabled = false;
         }
 
+        public Configuration(WebshopContext context) : this()
+        {
+            Seed(context);
+        }
+
         protected override void Seed(WebshopContext context)
         {
             //  This method will be called after migrating to the latest version.

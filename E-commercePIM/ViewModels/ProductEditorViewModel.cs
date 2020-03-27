@@ -17,7 +17,7 @@ namespace E_commercePIM.ViewModels
         [DataType(DataType.Currency)]
         public decimal Price { get; set; }
 
-        public IEnumerable<int> SelectedCategories { get; set; }
-        public IEnumerable<SelectListItem> AvailableCategories { get; set; }
+        public IEnumerable<int> SelectedCategories { get; set; } = new List<int>();
+        public IEnumerable<SelectListItem> AvailableCategories { get; set; } = new List<SelectListItem>();
     }
 }

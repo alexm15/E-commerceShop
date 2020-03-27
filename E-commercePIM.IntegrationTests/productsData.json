@@ -1,0 +1,56 @@
+[
+  {
+    "Id": 1,
+    "Name": "ASUS X554L Laptop",
+    "Description": "Laptop computer",
+    "Price": 5499.0
+  },
+  {
+    "Id": 2,
+    "Name": "HP Pavillion XE455",
+    "Description": "Newest Laptop with high specs",
+    "Price": 9299.0
+  },
+  {
+    "Id": 3,
+    "Name": "Harry Potter and the Chamber of Secrects",
+    "Description": "A Book by J.K Rowling Second Book",
+    "Price": 49.0
+  },
+  {
+    "Id": 4,
+    "Name": "Monty Python's Life of Brian",
+    "Description": "A Comedy movie",
+    "Price": 49.0
+  },
+  {
+    "Id": 5,
+    "Name": "W5 Glasses Wipes",
+    "Description": "For cleaning glasses",
+    "Price": 15.0
+  },
+  {
+    "Id": 6,
+    "Name": "Terminator Genysis",
+    "Description": "The fifth movies in the Terminator Movie Series",
+    "Price": 99.0
+  },
+  {
+    "Id": 7,
+    "Name": "How I Met Your Mother Complete Series",
+    "Description": "View all the loved episodes of the complete series",
+    "Price": 569.0
+  },
+  {
+    "Id": 8,
+    "Name": "The Day After Tommorrow",
+    "Description": "A big climate change changes the whole world. But not for the better",
+    "Price": 128.0
+  },
+  {
+    "Id": 9,
+    "Name": "Lenovo Laptop SPECIAL EDITION",
+    "Description": "This product now contains a description",
+    "Price": 4599.99
+  }
+]
