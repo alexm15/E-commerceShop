@@ -92,7 +92,7 @@ namespace E_commercePIM.Tests.Controllers
         }
 
         [Fact]
-        public async Task TestEditorPage()
+        public async Task EditorPageReturnsProductAsProductEditorModelWhenValid_Id_IsUsed()
         {
             var electronics = new Category {Name = "Electronics"};
             var books = new Category {Name = "Books"};
@@ -123,30 +123,42 @@ namespace E_commercePIM.Tests.Controllers
             Assert.Equal(2, model.AvailableCategories.Count());
         }
 
-        //[Fact]
-        //public async Task TestEditorPageUpdate()
-        //{
-        //    //See seeded data in Configuration class (called from super class)
+        [Fact]
+        public async Task TestEditorPageUpdate()
+        {
+            var electronics = new Category { Id = 1, Name = "Electronics" };
+            var books = new Category {Id = 2, Name = "Books" };
+            var categoryData = new List<Category> { electronics, books };
+            var productData = new List<Product>
+            {
+                new Product
+                {
+                    Id = 1,
+                    Name = "ASUS X554L Laptop", Description = "Laptop computer", Price = 5499M,
+                    Categories = new List<Category>()
+                }
+            };
+            var context = new WebshopContext { Products = DbMocker.MockDbSet(productData), Categories = DbMocker.MockDbSet(categoryData) };
+            var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
-        //    var viewModel = new ProductEditorViewModel
-        //    {
-        //        Id = 1,
-        //        Name = "ASUS Updated",
-        //        SelectedCategories = new[] { 1, 3 }
-        //    };
+            var viewModel = new ProductEditorViewModel
+            {
+                Id = 1,
+                Name = "ASUS Updated",
+                SelectedCategories = new[] { 1, 2 } //CategoryIDs
+            };
 
-        //    await _productsController.Editor(viewModel);
+            await controller.Editor(viewModel);
 
 
-        //    var result = await _productsController.Index() as ViewResult;
-        //    Assert.NotNull(result);
-        //    var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
-        //    Assert.Equal(8, model.Count());
-        //    var product = model.ToList()[0];
-        //    Assert.Equal("ASUS Updated", product.Name);
-        //    var productCategories = product.Categories.Select(c => c.Name).ToArray();
-        //    Assert.Equal("Electronics,Office Supplies", string.Join(",", productCategories));
-        //}
+            var result = await controller.Index() as ViewResult;
+            Assert.NotNull(result);
+            var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
+            var product = model.ToList()[0];
+            Assert.Equal("ASUS Updated", product.Name);
+            var productCategories = product.Categories.Select(c => c.Name).ToArray();
+            Assert.Equal("Electronics,Books", string.Join(",", productCategories));
+        }
 
         //[Fact]
         //public async Task TestEditorPageCreate()

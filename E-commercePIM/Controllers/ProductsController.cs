@@ -37,23 +37,22 @@ namespace E_commercePIM.Controllers
             var product = await _repository.GetProductAsync(id);
             var model = _mapper.Map<ProductEditorViewModel>(product);
             
-            model.AvailableCategories = PopulateCategories(product);
+            PopulateNavigationData(model, product);
+            
             return View(model);
         }
 
 
-        private IEnumerable<SelectListItem> PopulateCategories(Product product)
+        private void PopulateNavigationData(ProductEditorViewModel model, Product product)
         {
-            var categories = _context.Categories
-                .Include(c => c.Products).ToList();
-            return categories
+            model.AvailableCategories = _context.Categories
                 .Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
                     Text = c.Name,
-                    Selected = c.Products.Contains(product)
                 })
                 .ToList();
+            model.SelectedCategories = product.Categories.Select(c => c.Id);
         }
 
         [HttpPost, ValidateAntiForgeryToken]
@@ -62,7 +61,7 @@ namespace E_commercePIM.Controllers
             var product = await _repository.GetProductAsync(model.Id);
             if (!ModelState.IsValid)
             {
-                model.AvailableCategories = PopulateCategories(product);
+                PopulateNavigationData(model, product);
                 return View(model);
             }
             product = _mapper.Map(model, product);

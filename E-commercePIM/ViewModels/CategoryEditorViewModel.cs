@@ -12,6 +12,7 @@ namespace E_commercePIM.ViewModels
         [Required]
         public string Name { get; set; }
 
+        [Display(Name = "Current Products")]
         public IEnumerable<int> ProductsInCategory { get; set; } = new List<int>();
         public IEnumerable<SelectListItem> AvailableProducts { get; set; } = new List<SelectListItem>();
     }

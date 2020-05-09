@@ -39,7 +39,7 @@ namespace E_commerce.Data
         {
             if (product.Id == 0) _context.Products.Add(product);
             
-            foreach (var dbCategory in _context.Categories)
+            foreach (var dbCategory in await _context.Categories.ToListAsync())
             {
                 if (selectedCategoryIds.Contains(dbCategory.Id))
                 {

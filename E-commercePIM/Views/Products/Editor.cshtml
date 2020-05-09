@@ -45,10 +45,9 @@
         <div class="col-md-6">
             <div class="form-group">
                 @Html.LabelFor(model => model.SelectedCategories, "Categories (hold ctrl to select more than one):")
-                @Html.ListBoxFor(model => model.SelectedCategories, Model.AvailableCategories, new {@class = "form-control"})
+                @Html.ListBoxFor(model => model.SelectedCategories, Model.AvailableCategories, new {@class = "form-control", size = 10})
             </div>
         </div>
-
     </div>
 }
 

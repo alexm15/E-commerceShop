@@ -23,6 +23,8 @@ namespace E_commercePIM.Tests.Helpers
             mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(data.Expression);
             mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(data.ElementType);
             mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+            mockSet.Setup(x => x.Include(It.IsAny<string>())).Returns(mockSet.Object);
+
 
             //TODO: Figure out how to mock .AsNoTracking();
             return mockSet.Object;

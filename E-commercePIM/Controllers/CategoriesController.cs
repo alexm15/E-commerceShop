@@ -42,7 +42,8 @@ namespace E_commercePIM.Controllers
         {
             var category = await _categoryRepository.GetCategoryAsync(id);
             var model = _mapper.Map<CategoryEditorViewModel>(category);
-            model.AvailableProducts = PopulateProducts(category);
+            PopulateNavigationData(model, category);
+            model.ProductsInCategory = category.Products.Select(p => p.Id);
 
             return View(model);
         }
@@ -53,7 +54,7 @@ namespace E_commercePIM.Controllers
             var category = await _categoryRepository.GetCategoryAsync(model.Id);
             if (!ModelState.IsValid)
             {
-                model.AvailableProducts = PopulateProducts(category);
+                PopulateNavigationData(model, category);
                 return View(model);
             }
             category = _mapper.Map(model, category);
@@ -61,17 +62,16 @@ namespace E_commercePIM.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private IEnumerable<SelectListItem> PopulateProducts(Category category)
+        private void PopulateNavigationData(CategoryEditorViewModel model, Category category)
         {
-            var products = _productRepository.GetProductsAsync().Result;
-            return products
+            model.AvailableProducts = _productRepository.GetProductsAsync().Result
                 .Select(p => new SelectListItem
                 {
                     Value = p.Id.ToString(),
                     Text = p.Name,
-                    Selected = p.Categories.Contains(category)
                 })
                 .ToList();
+            model.ProductsInCategory = category.Products.Select(p => p.Id);
         }
 
         public async Task<ActionResult> Delete(int id)
@@ -79,19 +79,5 @@ namespace E_commercePIM.Controllers
             await _categoryRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
-    }
-
-    public class CategoryIndexViewModel
-    {
-        public IEnumerable<CategoryDataViewModel> Categories { get; set; } = new List<CategoryDataViewModel>();
-    }
-
-    public class CategoryDataViewModel
-    {
-        public int Id { get; set; }
-
-        public string Name { get; set; }
-
-        public int ProductCount { get; set; }
     }
 }
