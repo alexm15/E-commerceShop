@@ -1,35 +1,63 @@
-﻿@model IEnumerable<E_commerce.Library.Product>
+﻿@model E_commercePIM.ViewModels.ProductIndexViewModel
 
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Available Products</h2>
+<div class="row">
+    <div class="col-lg-4">
+        <h2>Available Products</h2>
+        <p>
+            @Html.ActionLink("Create New", "Editor", new {id = 0})
+        </p>
+    </div>
+    <div class="col-lg-4">
+        <br/>
+        @using (Html.BeginForm("Index", "Products", FormMethod.Get))
+        {
+            <p>
+                @Html.TextBox("SearchString", Model.CurrentFilter)
+                <input type="submit" value="Search"/>
+            </p>
+        }
+    </div>
+</div>
 
-<p>
-    @Html.ActionLink("Create New", "Editor", new {id = 0})
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Price)
-        </th>
-    </tr>
+<div class="row">
+    <div class="col-lg-2">
+        <ul>
+            <li>@Html.ActionLink("All", "Index")</li>
+            @foreach (var name in Model.CategoryNames)
+            {
+                <li>@Html.ActionLink(name, "Index", new { sortOrder = Model.NameSort, category = name, searchString = Model.CurrentFilter})</li>
+            }
+        </ul>
+    </div>
+    <div class="col-lg-10">
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.ActionLink("Name", "Index", new {sortOrder = Model.NameSort, category = Model.CategorySort, searchString = Model.CurrentFilter })
+                </th>
+                <th>
+                    @Html.ActionLink("Price", "Index", new { sortOrder = Model.PriceSort, category = Model.CategorySort, searchString = Model.CurrentFilter })
+                </th>
+            </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            <a href="@Url.Action("Editor", new {id = item.Id})">
-                @Html.DisplayFor(modelItem => item.Name)
-            </a>
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Price)
-        </td>
-    </tr>
-}
+            @foreach (var item in Model.Products) {
+                <tr>
+                    <td>
+                        <a href="@Url.Action("Editor", new {id = item.Id})">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                </tr>
+            }
 
-</table>
+        </table>
+    </div>
+</div>
+

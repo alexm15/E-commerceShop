@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using E_commerce.Library;
 
@@ -21,9 +22,35 @@ namespace E_commerce.Data
             await _context.SaveChangesAsync();
         }
 
-        public Task<List<Product>> GetProductsAsync()
+        public Task<List<Product>> GetProductsAsync(string sortQuery = null, string category = null, string searchString = null)
         {
-            return _context.Products.ToListAsync();
+            var products = from p in _context.Products
+                select p;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                products = products.Where(p => p.Name.Contains(searchString));
+            }
+            if (!string.IsNullOrEmpty(category))
+            {
+                products = products.Where(p => p.Categories.Any(c => c.Name == category));
+            }
+            switch (sortQuery)
+            {
+                case "name_desc":
+                    products = products.OrderByDescending(p => p.Name);
+                    break;
+                case "price_desc":
+                    products = products.OrderByDescending(p => p.Price);
+                    break;
+                case "Price":
+                    products = products.OrderBy(p => p.Price);
+                    break;
+                default:
+                    products = products.OrderBy(p => p.Name);
+                    break;
+            }
+            
+            return products.ToListAsync();
         }
 
         public async Task<Product> GetProductAsync(int? id)

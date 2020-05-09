@@ -27,9 +27,21 @@ namespace E_commercePIM.Controllers
         }
 
         // GET: Products
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string sortOrder, string category, string searchString)
         {
-            return View(await _repository.GetProductsAsync());
+
+
+            var model = new ProductIndexViewModel
+            {
+                CategoryNames = _context.Categories.Select(c => c.Name).ToList(),
+                NameSort = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "",
+                PriceSort = sortOrder == "Price" ? "price_desc" : "Price",
+                CategorySort = category,
+                CurrentFilter = searchString,
+                Products = await _repository.GetProductsAsync(sortOrder, category, searchString)
+            };
+
+            return View(model);
         }
 
         public async Task<ActionResult> Editor(int? id)
