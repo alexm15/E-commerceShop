@@ -28,7 +28,7 @@ namespace E_commercePIM.IntegrationTests
         {
             //See seeded data in Configuration class (called from super class)
             
-            var result = await _productsController.Index() as ViewResult;
+            var result = await _productsController.Index(null, null, null) as ViewResult;
 
             Assert.NotNull(result);
             var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
@@ -66,7 +66,7 @@ namespace E_commercePIM.IntegrationTests
             await _productsController.Editor(viewModel);
 
 
-            var result = await _productsController.Index() as ViewResult;
+            var result = await _productsController.Index(null, null, null) as ViewResult;
             Assert.NotNull(result);
             var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
             Assert.Equal(8, model.Count());
@@ -89,7 +89,7 @@ namespace E_commercePIM.IntegrationTests
             await _productsController.Editor(viewModel);
 
 
-            var result = await _productsController.Index() as ViewResult;
+            var result = await _productsController.Index(null, null, null) as ViewResult;
             Assert.NotNull(result);
             var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
             Assert.Equal(9, model.Count());
@@ -104,7 +104,7 @@ namespace E_commercePIM.IntegrationTests
             Assert.NotNull(dbProduct);
             await _productsController.Delete(dbProduct.Id);
 
-            var result = await _productsController.Index() as ViewResult;
+            var result = await _productsController.Index(null, null, null) as ViewResult;
             Assert.NotNull(result);
             var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
             Assert.Equal(7, model.Count());

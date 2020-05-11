@@ -84,7 +84,7 @@ namespace E_commercePIM.Tests.Controllers
 
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
-            var result = await controller.Index() as ViewResult;
+            var result = await controller.Index(null, null, null) as ViewResult;
 
             Assert.NotNull(result);
             var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
@@ -151,7 +151,7 @@ namespace E_commercePIM.Tests.Controllers
             await controller.Editor(viewModel);
 
 
-            var result = await controller.Index() as ViewResult;
+            var result = await controller.Index(null, null, null) as ViewResult;
             Assert.NotNull(result);
             var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
             var product = model.ToList()[0];

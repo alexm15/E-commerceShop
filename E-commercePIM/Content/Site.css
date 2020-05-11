@@ -4,10 +4,10 @@
 }
 
 /* Set padding to keep content from hitting the edges */
-.body-content {
+/*.body-content {
     padding-left: 15px;
     padding-right: 15px;
-}
+}*/
 
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
@@ -25,4 +25,30 @@ textarea {
 
 .top-button {
     margin-top: 2rem;
+}
+
+.sidenav {
+    height: 100%; /* 100% Full-height */ 
+    width: inherit; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    background-color: #222; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 70px; /*Place content 60px from the top */
+}
+
+/* The navigation menu links */
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #818181;
+    display: block;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+    color: #555555;
 }
