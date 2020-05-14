@@ -14,11 +14,11 @@
 
 <div class="row">
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation">
+        <li role="presentation" class="active">
             <a href="#general" aria-controls="general" role="tab" data-toggle="tab">General</a>
         </li>
-        <li role="presentation" class="active">
-            <a href="#variants" aria-controls="variants" role="tab" data-toggle="tab">Product Variants</a>
+        <li role="presentation">
+            <a href="#variants" aria-controls="variants" role="tab" data-toggle="tab">Variants</a>
         </li>
     </ul>
 </div>
@@ -27,7 +27,7 @@
 
 <!-- Tab panes -->
 <div class="tab-content">
-    <div role="tabpanel" class="tab-pane " id="general">
+    <div role="tabpanel" class="tab-pane active" id="general">
         @using (Html.BeginForm())
         {
             <div class="row">
@@ -67,7 +67,7 @@
             </div>
         }
     </div>
-    <div role="tabpanel" class="tab-pane active" id="variants">
+    <div role="tabpanel" class="tab-pane" id="variants">
         @using (Html.BeginForm("AddOrEditVariant", "Products"))
         {
             @Html.AntiForgeryToken()
@@ -103,7 +103,7 @@
                 <th></th>
             </tr>
 
-            <tr class="active">
+            <tr class="text-muted">
                 <td>
                     @Html.DisplayFor(model => model.Name)
                 </td>
@@ -123,7 +123,9 @@
                         @Html.DisplayFor(model => variant.Price)
                     </td>
                     <td>
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        <a href="@Url.Action("Delete", new {id = variant.Id})">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </a>
                     </td>
                 </tr>
             }

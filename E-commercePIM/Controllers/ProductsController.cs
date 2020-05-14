@@ -82,7 +82,13 @@ namespace E_commercePIM.Controllers
 
         public async Task<ActionResult> Delete(int id)
         {
+            var productToDelete = await _repository.GetProductAsync(id);
+            
             await _repository.DeleteAsync(id);
+            if (productToDelete.ParentId != null)
+            {
+                return RedirectToAction(nameof(Editor), new {id = productToDelete.ParentId});
+            }
             return RedirectToAction(nameof(Index));
         }
 
