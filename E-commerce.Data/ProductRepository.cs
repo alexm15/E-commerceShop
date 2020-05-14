@@ -22,18 +22,23 @@ namespace E_commerce.Data
             await _context.SaveChangesAsync();
         }
 
-        public Task<List<Product>> GetProductsAsync(string sortQuery = null, string category = null, string searchString = null)
+        public Task<List<Product>> GetProductsAsync(string sortQuery = null, string category = null,
+            string searchString = null)
         {
             var products = from p in _context.Products
+                where p.ParentId == null
                 select p;
+
             if (!string.IsNullOrEmpty(searchString))
             {
                 products = products.Where(p => p.Name.Contains(searchString));
             }
+
             if (!string.IsNullOrEmpty(category))
             {
                 products = products.Where(p => p.Categories.Any(c => c.Name == category));
             }
+
             switch (sortQuery)
             {
                 case "name_desc":
@@ -49,7 +54,7 @@ namespace E_commerce.Data
                     products = products.OrderBy(p => p.Name);
                     break;
             }
-            
+
             return products.ToListAsync();
         }
 
@@ -65,7 +70,7 @@ namespace E_commerce.Data
         public async Task AddOrUpdateProduct(Product product, ICollection<int> selectedCategoryIds)
         {
             if (product.Id == 0) _context.Products.Add(product);
-            
+
             foreach (var dbCategory in await _context.Categories.ToListAsync())
             {
                 if (selectedCategoryIds.Contains(dbCategory.Id))
