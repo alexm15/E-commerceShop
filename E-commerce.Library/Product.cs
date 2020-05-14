@@ -13,5 +13,6 @@ namespace E_commerce.Library
         public decimal Price { get; set; }
 
         public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
+        public int? ParentId { get; set; }
     }
 }

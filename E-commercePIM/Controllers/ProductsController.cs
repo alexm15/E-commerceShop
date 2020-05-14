@@ -46,6 +46,7 @@ namespace E_commercePIM.Controllers
         {
             var product = await _repository.GetProductAsync(id);
             var model = _mapper.Map<ProductEditorViewModel>(product);
+            model.CurrentProductVariants = _context.Products.Where(p => p.ParentId == id).ToList();
             
             PopulateNavigationData(model, product);
             
@@ -62,7 +63,7 @@ namespace E_commercePIM.Controllers
                     Text = c.Name,
                 })
                 .ToList();
-            model.SelectedCategories = product.Categories.Select(c => c.Id);
+            model.SelectedCategories = product.Categories.Select(c => c.Id).ToList();
         }
 
         [HttpPost, ValidateAntiForgeryToken]
@@ -83,6 +84,24 @@ namespace E_commercePIM.Controllers
         {
             await _repository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddOrEditVariant([Bind(Include = "Id, Name, VariantName, VariantPrice, Description, SelectedCategories")]ProductEditorViewModel model)
+        {
+            var variantName = $"{model.Name} {model.VariantName}";
+            var product = new Product
+            {
+                ParentId = model.Id,
+                Name = variantName,
+                Price = model.VariantPrice,
+                Description = model.Description,
+            };
+
+            await _repository.AddOrUpdateProduct(product, new HashSet<int>(model.SelectedCategories));
+
+            return RedirectToAction(nameof(Editor), new {id = model.Id});
+
         }
     }
 }
