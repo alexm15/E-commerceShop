@@ -5,55 +5,113 @@
 }
 
 <div class="row">
-    <h2 class="col-md-5 col-md-offset-1">@Model.Name</h2>
+    <h2 class="col-md-5">@Model.Name</h2>
     <div class="col-md-6">
         @Html.ActionLink("Delete", "Delete", new {id = @Model.Id}, new {@class = "btn btn-danger col-md-offset-1 top-button"})
     </div>
+
 </div>
 
-@using (Html.BeginForm())
-{
-    <div class="row">
-        @Html.AntiForgeryToken()
-        <hr/>
-        @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+<div class="row">
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation">
+            <a href="#general" aria-controls="general" role="tab" data-toggle="tab">General</a>
+        </li>
+        <li role="presentation" class="active">
+            <a href="#variants" aria-controls="variants" role="tab" data-toggle="tab">Product Variants</a>
+        </li>
+    </ul>
+</div>
 
-        @Html.HiddenFor(model => model.Id)
-        <div class="col-md-6">
-            <div class="form-group col-md-offset-2">
-                @Html.LabelFor(model => model.Name)
-                @Html.EditorFor(model => model.Name, new {htmlAttributes = new {@class = "form-control"}})
-                @Html.ValidationMessageFor(model => model.Name, "", new {@class = "text-danger"})
-            </div>
+<br/>
 
-            <div class="form-group col-md-offset-2">
-                @Html.LabelFor(model => model.Price)
-                @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
-            </div>
+<!-- Tab panes -->
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane " id="general">
+        @using (Html.BeginForm())
+        {
+            <div class="row">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new {@class = "text-danger"})
 
-            <div class="form-group col-md-offset-2">
-                @Html.LabelFor(model => model.Description)
-                @Html.TextAreaFor(model => model.Description, 5, 5, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
+                @Html.HiddenFor(model => model.Id)
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Name)
+                        @Html.EditorFor(model => model.Name, new {htmlAttributes = new {@class = "form-control"}})
+                        @Html.ValidationMessageFor(model => model.Name, "", new {@class = "text-danger"})
+                    </div>
 
-            <div class="form-group col-md-offset-2">
-                <input type="submit" value="Save" class="btn btn-default" />
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Price)
+                        @Html.EditorFor(model => model.Price, new {htmlAttributes = new {@class = "form-control"}})
+                        @Html.ValidationMessageFor(model => model.Price, "", new {@class = "text-danger"})
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Description)
+                        @Html.TextAreaFor(model => model.Description, 5, 5, new {@class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.Description, "", new {@class = "text-danger"})
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-default"/>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SelectedCategories, "Categories (hold ctrl to select more than one):")
+                        @Html.ListBoxFor(model => model.SelectedCategories, Model.AvailableCategories, new {@class = "form-control", size = 10})
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(model => model.SelectedCategories, "Categories (hold ctrl to select more than one):")
-                @Html.ListBoxFor(model => model.SelectedCategories, Model.AvailableCategories, new {@class = "form-control", size = 10})
-            </div>
-        </div>
+        }
     </div>
-}
+    <div role="tabpanel" class="tab-pane active" id="variants">
+        <form>
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label class="control-label">Variant Name</label>
+                    <input type="text" value="" class="form-control"/>
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label">Price</label>
+                    <input type="text" value="" class="form-control"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add Variant" class="btn btn-success"/>
+            </div>
+        </form>
+        <table class="table table-responsive table-bordered table-hover table-condensed">
+            <tr>
+                <th>
+                    Variant Name
+                </th>
+                <th>
+                    Price
+                </th>
+                <th></th>
+            </tr>
 
-<div class="col-md-offset-1">
-    @Html.ActionLink("Back to List", "Index")
+            <tr class="active">
+                <td>
+                    @Html.DisplayFor(model => model.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Price)
+                </td>
+                <td>
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </td>
+            </tr>
+
+        </table>
+    </div>
 </div>
+
+
+@Html.ActionLink("Back to List", "Index")
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

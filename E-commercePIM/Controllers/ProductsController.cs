@@ -29,8 +29,6 @@ namespace E_commercePIM.Controllers
         // GET: Products
         public async Task<ActionResult> Index(string sortOrder, string category, string searchString)
         {
-
-
             var model = new ProductIndexViewModel
             {
                 CategoryNames = _context.Categories.Select(c => c.Name).ToList(),
