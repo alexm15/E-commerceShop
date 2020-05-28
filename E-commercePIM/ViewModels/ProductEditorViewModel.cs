@@ -31,5 +31,7 @@ namespace E_commercePIM.ViewModels
         public IEnumerable<Product> CurrentProductVariants { get; set; } = new List<Product>();
         public string ShowVariantPage { get; set; }
         public string ShowGeneralPage { get; set; }
+        public string VariantButtonName { get; set; }
+        public int? VariantId { get; set; }
     }
 }
