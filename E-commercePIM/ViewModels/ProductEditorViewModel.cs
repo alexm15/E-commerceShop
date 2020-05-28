@@ -29,5 +29,7 @@ namespace E_commercePIM.ViewModels
         public decimal VariantPrice { get; set; }
         
         public IEnumerable<Product> CurrentProductVariants { get; set; } = new List<Product>();
+        public string ShowVariantPage { get; set; }
+        public string ShowGeneralPage { get; set; }
     }
 }

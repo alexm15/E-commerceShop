@@ -42,12 +42,23 @@ namespace E_commercePIM.Controllers
             return View(model);
         }
 
-        public async Task<ActionResult> Editor(int? id)
+        public async Task<ActionResult> Editor(int? id, int? variantId)
         {
             var product = await _repository.GetProductAsync(id);
             var model = _mapper.Map<ProductEditorViewModel>(product);
             model.CurrentProductVariants = _context.Products.Where(p => p.ParentId == id).ToList();
-            
+            if (variantId != null)
+            {
+                var variant = await _repository.GetProductAsync(variantId);
+                model.VariantName = variant.Name;
+                model.VariantPrice = variant.Price;
+                model.ShowVariantPage = "active";
+            }
+            else
+            {
+                model.ShowGeneralPage = "active";
+            }
+
             PopulateNavigationData(model, product);
             
             return View(model);
@@ -105,8 +116,9 @@ namespace E_commercePIM.Controllers
             };
 
             await _repository.AddOrUpdateProduct(product, new HashSet<int>(model.SelectedCategories));
+            var createdProductFromDB = await _context.Products.SingleAsync(p => p.Name == variantName);
 
-            return RedirectToAction(nameof(Editor), new {id = model.Id});
+            return RedirectToAction(nameof(Editor), new {id = model.Id, variantId = createdProductFromDB.Id});
 
         }
     }

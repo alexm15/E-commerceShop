@@ -14,10 +14,10 @@
 
 <div class="row">
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active">
+        <li role="presentation" class="@Model.ShowGeneralPage">
             <a href="#general" aria-controls="general" role="tab" data-toggle="tab">General</a>
         </li>
-        <li role="presentation">
+        <li role="presentation" class="@Model.ShowVariantPage">
             <a href="#variants" aria-controls="variants" role="tab" data-toggle="tab">Variants</a>
         </li>
     </ul>
@@ -27,7 +27,7 @@
 
 <!-- Tab panes -->
 <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="general">
+    <div role="tabpanel" class="tab-pane @Model.ShowGeneralPage" id="general">
         @using (Html.BeginForm())
         {
             <div class="row">
@@ -67,7 +67,7 @@
             </div>
         }
     </div>
-    <div role="tabpanel" class="tab-pane" id="variants">
+    <div role="tabpanel" class="tab-pane @Model.ShowVariantPage" id="variants">
         @using (Html.BeginForm("AddOrEditVariant", "Products"))
         {
             @Html.AntiForgeryToken()
@@ -92,7 +92,7 @@
                 <input type="submit" value="Add Variant" class="btn btn-success" />
             </div>
         }
-        <table class="table table-responsive table-bordered table-hover table-condensed">
+        <table class="table table-responsive table-bordered table-hover">
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.VariantName)
@@ -118,6 +118,9 @@
                 <tr>
                     <td>
                         @Html.DisplayFor(model => variant.Name)
+                        <a href="@Url.Action("Editor", new {id = Model.Id, variantId = variant.Id})">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                        </a>
                     </td>
                     <td>
                         @Html.DisplayFor(model => variant.Price)
