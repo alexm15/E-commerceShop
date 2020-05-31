@@ -40,7 +40,7 @@ namespace E_commercePIM.IntegrationTests
         {
             //See seeded data in Configuration class (called from super class)
 
-            var result = await _productsController.Editor(1) as ViewResult;
+            var result = await _productsController.Editor(1, null) as ViewResult;
 
             Assert.NotNull(result);
             var model = Assert.IsAssignableFrom<ProductEditorViewModel>(result.Model);

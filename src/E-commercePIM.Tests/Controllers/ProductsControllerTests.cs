@@ -112,7 +112,7 @@ namespace E_commercePIM.Tests.Controllers
 
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
-            var result = await controller.Editor(1) as ViewResult;
+            var result = await controller.Editor(1, null) as ViewResult;
 
             Assert.NotNull(result);
             var model = Assert.IsAssignableFrom<ProductEditorViewModel>(result.Model);
