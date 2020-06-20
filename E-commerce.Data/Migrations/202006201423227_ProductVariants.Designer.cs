@@ -7,13 +7,13 @@ namespace E_commerce.Data.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class ProductVariant : IMigrationMetadata
+    public sealed partial class ProductVariants : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ProductVariant));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(ProductVariants));
         
         string IMigrationMetadata.Id
         {
-            get { return "202005141525258_ProductVariant"; }
+            get { return "202006201423227_ProductVariants"; }
         }
         
         string IMigrationMetadata.Source

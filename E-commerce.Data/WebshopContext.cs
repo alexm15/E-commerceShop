@@ -32,6 +32,11 @@ namespace E_commerce.Data
                 .Property(p => p.Name)
                 .HasMaxLength(1000)
                 .IsRequired();
+
+            modelBuilder.Entity<Product>()
+                .HasOptional(p => p.ParentProduct)
+                .WithMany(p => p.Variants)
+                .HasForeignKey(p => p.ParentId);
         }
     }
 }

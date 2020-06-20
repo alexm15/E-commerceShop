@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core;
 using System.Linq;
 using System.Threading.Tasks;
 using E_commerce.Library;
@@ -17,7 +18,18 @@ namespace E_commerce.Data
 
         public async Task DeleteAsync(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products
+                .Include(p => p.Variants)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            
+            if (product == null)
+            {
+                throw new ObjectNotFoundException($"The requested product with id:{id} could not be found in DB");
+            }
+            foreach (var variant in product.Variants.ToList())
+            {
+                _context.Products.Remove(variant);
+            }
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
         }

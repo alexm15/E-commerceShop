@@ -98,6 +98,7 @@ namespace E_commercePIM.Controllers
         {
             var productToDelete = await _repository.GetProductAsync(id);
             
+
             await _repository.DeleteAsync(id);
             if (productToDelete.ParentId != null)
             {

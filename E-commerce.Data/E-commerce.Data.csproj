@@ -60,9 +60,9 @@
     <Compile Include="Migrations\202003051254432_ContraintsProductAndCategory.Designer.cs">
       <DependentUpon>202003051254432_ContraintsProductAndCategory.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202005141525258_ProductVariant.cs" />
-    <Compile Include="Migrations\202005141525258_ProductVariant.Designer.cs">
-      <DependentUpon>202005141525258_ProductVariant.cs</DependentUpon>
+    <Compile Include="Migrations\202006201423227_ProductVariants.cs" />
+    <Compile Include="Migrations\202006201423227_ProductVariants.Designer.cs">
+      <DependentUpon>202006201423227_ProductVariants.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ProductRepository.cs" />
@@ -86,8 +86,8 @@
     <EmbeddedResource Include="Migrations\202003051254432_ContraintsProductAndCategory.resx">
       <DependentUpon>202003051254432_ContraintsProductAndCategory.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202005141525258_ProductVariant.resx">
-      <DependentUpon>202005141525258_ProductVariant.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202006201423227_ProductVariants.resx">
+      <DependentUpon>202006201423227_ProductVariants.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

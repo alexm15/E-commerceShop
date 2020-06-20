@@ -14,5 +14,7 @@ namespace E_commerce.Library
 
         public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
         public int? ParentId { get; set; }
+        public virtual ICollection<Product> Variants { get; set; } = new List<Product>();
+        public Product ParentProduct { get; set; }
     }
 }
