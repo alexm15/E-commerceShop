@@ -40,35 +40,37 @@ namespace E_commerce.Data
             await _context.SaveChangesAsync();
         }
 
-        public async Task CreateAsync(Category category)
-        {
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
-        }
-
         public async Task AddOrUpdateCategory(Category category, IEnumerable<int> selectedProductsIds)
         {
             if (category.Id == 0) _context.Categories.Add(category);
 
-            foreach (var dbProduct in _context.Products)
+            var dbProducts = _context.Products.ToList();
+            UpdateCategoryProducts(category, selectedProductsIds, dbProducts);
+            
+            await _context.SaveChangesAsync();
+
+        }
+
+        //TODO: make this generic with UpdateProductCategories
+        private void UpdateCategoryProducts(Category category, IEnumerable<int> selectedProductsIds, IEnumerable<Product> dbProducts)
+        {
+            foreach (var product in dbProducts)
             {
-                if (selectedProductsIds.Contains(dbProduct.Id))
+                if (selectedProductsIds.Contains(product.Id))
                 {
-                    if (!category.Products.Contains(dbProduct))
+                    if (!category.Products.Contains(product))
                     {
-                        category.Products.Add(dbProduct);
+                        category.Products.Add(product);
                     }
                 }
                 else
                 {
-                    if (category.Products.Contains(dbProduct))
+                    if (category.Products.Contains(product))
                     {
-                        category.Products.Remove(dbProduct);
+                        category.Products.Remove(product);
                     }
                 }
             }
-            await _context.SaveChangesAsync();
-
         }
 
         public int GetProductCount(int categoryId)

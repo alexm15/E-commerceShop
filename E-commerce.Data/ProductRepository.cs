@@ -76,7 +76,8 @@ namespace E_commerce.Data
             _context.Configuration.ProxyCreationEnabled = false;
             var dbProduct = await _context.Products
                 .Include(p => p.Categories)
-                .Include(p => p.Variants)
+                .Include(p => p.Variants.Select(v => v.Categories)) //TODO: consider if this big join statement is better than multiple simple queries.
+                
                 .FirstOrDefaultAsync(p => p.Id == id);
             return dbProduct;
         }
@@ -93,7 +94,7 @@ namespace E_commerce.Data
             {
                 foreach (var variant in product.Variants.ToList())
                 {
-                    variant.Description = product.Description;
+                    //Should small queries for variants be used instead of big join?? (see GetProductAsync())
                     UpdateProductCategories(variant, selectedCategoryIds, allCategoriesFromDB);
                 }
             }
