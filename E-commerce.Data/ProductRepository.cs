@@ -74,7 +74,9 @@ namespace E_commerce.Data
         {
             if (id == 0) return new Product();
             _context.Configuration.ProxyCreationEnabled = false;
-            var dbProduct = await _context.Products.Include(p => p.Categories)
+            var dbProduct = await _context.Products
+                .Include(p => p.Categories)
+                .Include(p => p.Variants)
                 .FirstOrDefaultAsync(p => p.Id == id);
             return dbProduct;
         }
@@ -83,25 +85,41 @@ namespace E_commerce.Data
         {
             if (product.Id == 0) _context.Products.Add(product);
 
-            foreach (var dbCategory in await _context.Categories.ToListAsync())
+            //TODO: try to clear list and then add a new instead.
+            var allCategoriesFromDB = await _context.Categories.ToListAsync();
+            UpdateProductCategories(product, selectedCategoryIds, allCategoriesFromDB);
+
+            if (product.ParentId == null)
             {
-                if (selectedCategoryIds.Contains(dbCategory.Id))
+                foreach (var variant in product.Variants.ToList())
                 {
-                    if (!product.Categories.Contains(dbCategory))
-                    {
-                        product.Categories.Add(dbCategory);
-                    }
-                }
-                else
-                {
-                    if (product.Categories.Contains(dbCategory))
-                    {
-                        product.Categories.Remove(dbCategory);
-                    }
+                    variant.Description = product.Description;
+                    UpdateProductCategories(variant, selectedCategoryIds, allCategoriesFromDB);
                 }
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        private void UpdateProductCategories(Product product, ICollection<int> selectedCategoryIds, IEnumerable<Category> dbCateogries)
+        {
+            foreach (var category in dbCateogries)
+            {
+                if (selectedCategoryIds.Contains(category.Id))
+                {
+                    if (!product.Categories.Contains(category))
+                    {
+                        product.Categories.Add(category);
+                    }
+                }
+                else
+                {
+                    if (product.Categories.Contains(category))
+                    {
+                        product.Categories.Remove(category);
+                    }
+                }
+            }
         }
 
         public async Task CreateAsync(Product product)

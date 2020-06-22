@@ -46,7 +46,7 @@ namespace E_commercePIM.Controllers
         {
             var product = await _repository.GetProductAsync(id);
             var model = _mapper.Map<ProductEditorViewModel>(product);
-            model.CurrentProductVariants = _context.Products.Where(p => p.ParentId == id).ToList();
+            model.CurrentProductVariants = product.Variants.ToList();
             if (variantId != null)
             {
                 var variant = await _repository.GetProductAsync(variantId);
