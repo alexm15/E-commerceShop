@@ -102,6 +102,7 @@ namespace E_commerce.Data
             await _context.SaveChangesAsync();
         }
 
+        //TODO: make this generic with UpdateCategoryProducts
         private void UpdateProductCategories(Product product, ICollection<int> selectedCategoryIds, IEnumerable<Category> dbCateogries)
         {
             foreach (var category in dbCateogries)

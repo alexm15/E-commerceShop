@@ -42,7 +42,7 @@ namespace E_commercePIM.Controllers
             return View(model);
         }
 
-        public async Task<ActionResult> Editor(int? id, int? variantId)
+        public async Task<ActionResult> Editor(int? id, int? variantId, bool showVariantPage)
         {
             var product = await _repository.GetProductAsync(id);
             var model = _mapper.Map<ProductEditorViewModel>(product);
@@ -53,13 +53,20 @@ namespace E_commercePIM.Controllers
                 model.VariantId = variantId;
                 model.VariantName = variant.Name;
                 model.VariantPrice = variant.Price;
-                model.ShowVariantPage = "active";
                 model.VariantButtonName = "Save";
             }
             else
             {
-                model.ShowGeneralPage = "active";
                 model.VariantButtonName = "Add Variant";
+            }
+
+            if (showVariantPage)
+            {
+                model.ShowVariantPage = "active";
+            }
+            else
+            {
+                model.ShowGeneralPage = "active";
             }
 
             PopulateNavigationData(model, product);
@@ -110,16 +117,16 @@ namespace E_commercePIM.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<ActionResult> AddOrEditVariant(ProductEditorViewModel model)
         {
-            var existingProduct = await _repository.GetProductAsync(model.VariantId);
-            if (existingProduct != null)
+            var existingOrNewProduct = await _repository.GetProductAsync(model.VariantId);
+            if (existingOrNewProduct != null)
             {
-                existingProduct.Name = model.VariantName;
-                existingProduct.Price = model.VariantPrice;
+                existingOrNewProduct.Name = model.VariantName;
+                existingOrNewProduct.Price = model.VariantPrice;
             }
             else
             {
                 var variantName = $"{model.Name} {model.VariantName}";
-                existingProduct = new Product //existing product becomes new product instead
+                existingOrNewProduct = new Product //existing product becomes new product instead
                 {
                     ParentId = model.Id,
                     Name = variantName,
@@ -129,8 +136,8 @@ namespace E_commercePIM.Controllers
             }
             
 
-            await _repository.AddOrUpdateProduct(existingProduct, new HashSet<int>(model.SelectedCategories));
-            var createdProductFromDB = await _context.Products.SingleAsync(p => p.Name == existingProduct.Name);
+            await _repository.AddOrUpdateProduct(existingOrNewProduct, new HashSet<int>(model.SelectedCategories));
+            var createdProductFromDB = await _context.Products.SingleAsync(p => p.Name == existingOrNewProduct.Name);
 
             return RedirectToAction(nameof(Editor), new {id = model.Id, variantId = createdProductFromDB.Id});
 
