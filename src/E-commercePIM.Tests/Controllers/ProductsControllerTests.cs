@@ -25,71 +25,58 @@ namespace E_commercePIM.Tests.Controllers
 
 
         [Fact]
-        public async Task IndexReturnsListOfProducts()
+        public async Task Index_returns_list_of_products_and_categories()
         {
             //Arrange
-            var electronics = new Category {Name = "Electronics"};
-            var books = new Category {Name = "Books"};
-            var officeSupplies = new Category {Name = "Office Supplies"};
-            var moviesAndTv = new Category {Name = "Movies and TV-Shows"};
-
-            var data = new List<Product>
+            var categories = new List<Category>
             {
-                new Product
-                {
-                    Name = "ASUS X554L Laptop", Description = "Laptop computer", Price = 5499M,
-                    Categories = new List<Category> {electronics}
-                },
-                new Product
-                {
-                    Name = "HP Pavillion XE455", Description = "Newest Laptop with high specs", Price = 9299M,
-                    Categories = new List<Category> {electronics}
-                },
-                new Product
-                {
-                    Name = "Harry Potter and the Chamber of Secrects",
-                    Description = "A Book by J.K Rowling Second Book", Price = 49M,
-                    Categories = new List<Category> {books}
-                },
-                new Product
-                {
-                    Name = "Monty Python's Life of Brian", Description = "A Comedy movie", Price = 49M,
-                    Categories = new List<Category> {moviesAndTv}
-                },
-                new Product
-                {
-                    Name = "W5 Glasses Wipes", Description = "For cleaning glasses", Price = 15M,
-                    Categories = new List<Category> {officeSupplies}
-                },
-                new Product
-                {
-                    Name = "Terminator Genysis", Description = "The fifth movies in the Terminator Movie Series",
-                    Price = 99M, Categories = new List<Category> {moviesAndTv}
-                },
-                new Product
-                {
-                    Name = "How I Met Your Mother Complete Series",
-                    Description = "View all the loved episodes of the complete series", Price = 569M,
-                    Categories = new List<Category> {moviesAndTv}
-                },
-                new Product
-                {
-                    Name = "The Day After Tommorrow",
-                    Description = "A big climate change changes the whole world. But not for the better", Price = 128M,
-                    Categories = new List<Category> {officeSupplies}
-                }
-            }.AsQueryable();
-
-            var context = new WebshopContext {Products = DbMocker.MockDbSet(data)};
-
+                new Category {Name = "Electronics"},
+                new Category {Name = "Movies and TV-Shows"}
+            };
+            var products = new List<Product>
+            {
+                new Product {Name = "ASUS X554L Laptop", Price = 5499M},
+                new Product {Name = "HP Pavillion XE455", Price = 9299M},
+                new Product {Name = "Monty Python's Life of Brian", Price = 49M},
+                new Product {Name = "Terminator Genysis", Price = 99M},
+                new Product {Name = "How I Met Your Mother Complete Series", Price = 569M},
+            };
+            var context = new WebshopContext {Products = TestHelpers.MockDbSet(products), Categories = TestHelpers.MockDbSet(categories)};
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
+            //Act
             var result = await controller.Index(null, null, null) as ViewResult;
-
             Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
-            Assert.Equal(8, model.Count());
+            var model = Assert.IsAssignableFrom<ProductIndexViewModel>(result.Model);
+
+            //Assert
+            Assert.Equal(5, model.Products.Count());
+            Assert.Equal(2, model.CategoryNames.Count());
         }
+
+        [Fact]
+        public async Task Index_returns_products_sorted_ascending_when_called_with_all_parameters_null()
+        {
+            var products = new List<Product>
+            {
+                new Product {Name = "HP Pavillion XE455"},
+                new Product {Name = "ASUS X554L Laptop"},
+            };
+            var context = new WebshopContext { Products = TestHelpers.MockDbSet(products), Categories = TestHelpers.MockDbSet<Category>() };
+            var controller = new ProductsController(new ProductRepository(context), _mapper, context);
+
+            //Act
+            var result = await controller.Index(null, null, null) as ViewResult;
+            Assert.NotNull(result);
+            var model = Assert.IsAssignableFrom<ProductIndexViewModel>(result.Model);
+
+            //Assert
+            var productsFromModel = model.Products.ToList();
+            Assert.Equal("ASUS X554L Laptop", productsFromModel[0].Name);
+        }
+
+
+
 
         [Fact]
         public async Task EditorPageReturnsProductAsProductEditorModelWhenValid_Id_IsUsed()
@@ -108,7 +95,8 @@ namespace E_commercePIM.Tests.Controllers
                 }
             };
 
-            var context = new WebshopContext {Products = DbMocker.MockDbSet(productData), Categories = DbMocker.MockDbSet(categoryData)};
+            var context = new WebshopContext
+                {Products = TestHelpers.MockDbSet(productData), Categories = TestHelpers.MockDbSet(categoryData)};
 
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
@@ -126,9 +114,9 @@ namespace E_commercePIM.Tests.Controllers
         [Fact]
         public async Task TestEditorPageUpdate()
         {
-            var electronics = new Category { Id = 1, Name = "Electronics" };
-            var books = new Category {Id = 2, Name = "Books" };
-            var categoryData = new List<Category> { electronics, books };
+            var electronics = new Category {Id = 1, Name = "Electronics"};
+            var books = new Category {Id = 2, Name = "Books"};
+            var categoryData = new List<Category> {electronics, books};
             var productData = new List<Product>
             {
                 new Product
@@ -138,14 +126,15 @@ namespace E_commercePIM.Tests.Controllers
                     Categories = new List<Category>()
                 }
             };
-            var context = new WebshopContext { Products = DbMocker.MockDbSet(productData), Categories = DbMocker.MockDbSet(categoryData) };
+            var context = new WebshopContext
+                {Products = TestHelpers.MockDbSet(productData), Categories = TestHelpers.MockDbSet(categoryData)};
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             var viewModel = new ProductEditorViewModel
             {
                 Id = 1,
                 Name = "ASUS Updated",
-                SelectedCategories = new[] { 1, 2 } //CategoryIDs
+                SelectedCategories = new[] {1, 2} //CategoryIDs
             };
 
             await controller.Editor(viewModel);

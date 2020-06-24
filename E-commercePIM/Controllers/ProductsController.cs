@@ -42,7 +42,7 @@ namespace E_commercePIM.Controllers
             return View(model);
         }
 
-        public async Task<ActionResult> Editor(int? id, int? variantId, bool showVariantPage)
+        public async Task<ActionResult> Editor(int? id, int? variantId)
         {
             var product = await _repository.GetProductAsync(id);
             var model = _mapper.Map<ProductEditorViewModel>(product);
@@ -54,21 +54,13 @@ namespace E_commercePIM.Controllers
                 model.VariantName = variant.Name;
                 model.VariantPrice = variant.Price;
                 model.VariantButtonName = "Save";
-            }
-            else
-            {
-                model.VariantButtonName = "Add Variant";
-            }
-
-            if (showVariantPage)
-            {
                 model.ShowVariantPage = "active";
             }
             else
             {
+                model.VariantButtonName = "Add Variant";
                 model.ShowGeneralPage = "active";
             }
-
             PopulateNavigationData(model, product);
             
             return View(model);
