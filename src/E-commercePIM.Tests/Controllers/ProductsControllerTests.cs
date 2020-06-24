@@ -75,6 +75,27 @@ namespace E_commercePIM.Tests.Controllers
             Assert.Equal("ASUS X554L Laptop", productsFromModel[0].Name);
         }
 
+        [Fact]
+        public async Task Index_returns_products_sorted_descending_when_sortOrder_parameter_is_called_with_namedesc()
+        {
+            var products = new List<Product>
+            {
+                new Product {Name = "HP Pavillion XE455"},
+                new Product {Name = "ASUS X554L Laptop"},
+            };
+            var context = new WebshopContext { Products = TestHelpers.MockDbSet(products), Categories = TestHelpers.MockDbSet<Category>() };
+            var controller = new ProductsController(new ProductRepository(context), _mapper, context);
+
+            //Act
+            var result = await controller.Index(null, null, null) as ViewResult;
+            Assert.NotNull(result);
+            var model = Assert.IsAssignableFrom<ProductIndexViewModel>(result.Model);
+
+            //Assert
+            var productsFromModel = model.Products.ToList();
+            Assert.Equal("ASUS X554L Laptop", productsFromModel[0].Name);
+        }
+
 
 
 
