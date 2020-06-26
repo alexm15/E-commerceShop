@@ -75,14 +75,20 @@ namespace E_commercePIM.Tests.Controllers
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             //Act
-            var result = await controller.Index(sortOrder, null, null) as ViewResult;
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<ProductIndexViewModel>(result.Model);
+            var model = await RunControllerAction<ProductIndexViewModel>(controller.Index(sortOrder, null, null));
 
             //Assert
             var productsFromModel = model.Products.ToList();
             Assert.Equal(nameOfFirstProduct, productsFromModel[0].Name);
             Assert.Equal(priceOfFirstProduct, productsFromModel[0].Price);
+        }
+
+        private static async Task<T> RunControllerAction<T>(Task<ActionResult> asyncActionResult)
+        {
+            var result = await asyncActionResult as ViewResult;
+            Assert.NotNull(result);
+            var model = Assert.IsAssignableFrom<T>(result.Model);
+            return model;
         }
 
         [Theory]
@@ -106,9 +112,7 @@ namespace E_commercePIM.Tests.Controllers
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             //Act
-            var result = await controller.Index(null, categoryQueryString, null) as ViewResult;
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<ProductIndexViewModel>(result.Model);
+            var model = await RunControllerAction<ProductIndexViewModel>(controller.Index(null, categoryQueryString, null));
 
             //Assert
             Assert.Equal(numberOfProductsShown, model.Products.Count());
@@ -140,10 +144,8 @@ namespace E_commercePIM.Tests.Controllers
 
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
-            var result = await controller.Editor(1, null) as ViewResult;
+            var model = await RunControllerAction<ProductEditorViewModel>(controller.Editor(1, null));
 
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<ProductEditorViewModel>(result.Model);
             Assert.Equal(1, model.Id);
             Assert.Equal("ASUS X554L Laptop", model.Name);
             Assert.Equal("Laptop computer", model.Description);
@@ -180,48 +182,13 @@ namespace E_commercePIM.Tests.Controllers
             await controller.Editor(viewModel);
 
 
-            var result = await controller.Index(null, null, null) as ViewResult;
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
-            var product = model.ToList()[0];
+            var model = await RunControllerAction<ProductIndexViewModel>(controller.Index(null, null, null));
+
+            var product = model.Products.ToList()[0];
             Assert.Equal("ASUS Updated", product.Name);
             var productCategories = product.Categories.Select(c => c.Name).ToArray();
             Assert.Equal("Electronics,Books", string.Join(",", productCategories));
         }
 
-        //[Fact]
-        //public async Task TestEditorPageCreate()
-        //{
-        //    //See seeded data in Configuration class (called from super class)
-
-        //    var viewModel = new ProductEditorViewModel
-        //    {
-        //        Name = "New Product",
-        //    };
-
-        //    await _productsController.Editor(viewModel);
-
-
-        //    var result = await _productsController.Index() as ViewResult;
-        //    Assert.NotNull(result);
-        //    var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
-        //    Assert.Equal(9, model.Count());
-        //    Assert.Contains(model, p => p.Name.Equals("New Product"));
-        //}
-
-        //[Fact]
-        //public async Task TestDelete()
-        //{
-        //    //See seeded data in Configuration class (called from super class)
-        //    var dbProduct = _context.Products.FirstOrDefault(p => p.Name.Equals("ASUS X554L Laptop"));
-        //    Assert.NotNull(dbProduct);
-        //    await _productsController.Delete(dbProduct.Id);
-
-        //    var result = await _productsController.Index() as ViewResult;
-        //    Assert.NotNull(result);
-        //    var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
-        //    Assert.Equal(7, model.Count());
-        //    Assert.DoesNotContain(model, p => p.Name.Equals("ASUS X554L Laptop"));
-        //}
     }
 }
