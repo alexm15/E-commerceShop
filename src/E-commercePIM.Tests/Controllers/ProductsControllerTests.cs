@@ -41,7 +41,8 @@ namespace E_commercePIM.Tests.Controllers
                 new Product {Name = "Terminator Genysis", Price = 99M},
                 new Product {Name = "How I Met Your Mother Complete Series", Price = 569M},
             };
-            var context = new WebshopContext {Products = TestHelpers.MockDbSet(products), Categories = TestHelpers.MockDbSet(categories)};
+            var context = new WebshopContext
+                {Products = TestHelpers.MockDbSet(products), Categories = TestHelpers.MockDbSet(categories)};
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             //Act
@@ -54,49 +55,67 @@ namespace E_commercePIM.Tests.Controllers
             Assert.Equal(2, model.CategoryNames.Count());
         }
 
-        [Fact]
-        public async Task Index_returns_products_sorted_ascending_when_called_with_all_parameters_null()
+
+        [Theory]
+        [InlineData("Price", "Z", 10)]
+        [InlineData("price_desc", "A", 20)]
+        [InlineData(null, "A", 20)]
+        [InlineData("name_desc", "Z", 10)]
+        public async Task
+            Index_returns_products_sorted_ascending_by_price_when_sortOrder_parameter_is_called_with_Price(
+                string sortOrder, string nameOfFirstProduct, decimal priceOfFirstProduct)
         {
             var products = new List<Product>
             {
-                new Product {Name = "HP Pavillion XE455"},
-                new Product {Name = "ASUS X554L Laptop"},
+                new Product {Name = "Z", Price = 10m},
+                new Product {Name = "A", Price = 20m},
             };
-            var context = new WebshopContext { Products = TestHelpers.MockDbSet(products), Categories = TestHelpers.MockDbSet<Category>() };
+            var context = new WebshopContext
+                {Products = TestHelpers.MockDbSet(products), Categories = TestHelpers.MockDbSet<Category>()};
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             //Act
-            var result = await controller.Index(null, null, null) as ViewResult;
+            var result = await controller.Index(sortOrder, null, null) as ViewResult;
             Assert.NotNull(result);
             var model = Assert.IsAssignableFrom<ProductIndexViewModel>(result.Model);
 
             //Assert
             var productsFromModel = model.Products.ToList();
-            Assert.Equal("ASUS X554L Laptop", productsFromModel[0].Name);
+            Assert.Equal(nameOfFirstProduct, productsFromModel[0].Name);
+            Assert.Equal(priceOfFirstProduct, productsFromModel[0].Price);
         }
 
-        [Fact]
-        public async Task Index_returns_products_sorted_descending_when_sortOrder_parameter_is_called_with_namedesc()
+        [Theory]
+        [InlineData("CategoryB", 2, "A", 30)]
+        [InlineData("CategoryA", 1, "Z", 10)]
+        [InlineData(null, 3, "A", 30)]
+        [InlineData("", 3, "A", 30)]
+        public async Task Index_returns_products_filtered_by_category_when_category_is_used_as_input(string categoryQueryString, int numberOfProductsShown, string nameOfFirstProduct, decimal priceOfFirstProduct)
         {
+            var categoryA = new Category {Name = "CategoryA"};
+            var categoryB = new Category {Name = "CategoryB"};
+            var categories = new List<Category> {categoryA, categoryB};
             var products = new List<Product>
             {
-                new Product {Name = "HP Pavillion XE455"},
-                new Product {Name = "ASUS X554L Laptop"},
+                new Product {Name = "Z", Price = 10m, Categories = new List<Category> {categoryA}},
+                new Product {Name = "Q", Price = 20m, Categories = new List<Category> {categoryB}},
+                new Product {Name = "A", Price = 30m, Categories = new List<Category> {categoryB}},
             };
-            var context = new WebshopContext { Products = TestHelpers.MockDbSet(products), Categories = TestHelpers.MockDbSet<Category>() };
+            var context = new WebshopContext
+                {Products = TestHelpers.MockDbSet(products), Categories = TestHelpers.MockDbSet(categories)};
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             //Act
-            var result = await controller.Index(null, null, null) as ViewResult;
+            var result = await controller.Index(null, categoryQueryString, null) as ViewResult;
             Assert.NotNull(result);
             var model = Assert.IsAssignableFrom<ProductIndexViewModel>(result.Model);
 
             //Assert
+            Assert.Equal(numberOfProductsShown, model.Products.Count());
             var productsFromModel = model.Products.ToList();
-            Assert.Equal("ASUS X554L Laptop", productsFromModel[0].Name);
+            Assert.Equal(nameOfFirstProduct, productsFromModel[0].Name);
+            Assert.Equal(priceOfFirstProduct, productsFromModel[0].Price);
         }
-
-
 
 
         [Fact]
