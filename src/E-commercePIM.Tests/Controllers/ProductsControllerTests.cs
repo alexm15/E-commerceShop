@@ -9,6 +9,7 @@ using E_commercePIM.Controllers;
 using E_commercePIM.Mapping;
 using E_commercePIM.Tests.Helpers;
 using E_commercePIM.ViewModels;
+using TestHelpers;
 using Xunit;
 
 namespace E_commercePIM.Tests.Controllers
@@ -42,13 +43,11 @@ namespace E_commercePIM.Tests.Controllers
                 new Product {Name = "How I Met Your Mother Complete Series", Price = 569M},
             };
             var context = new WebshopContext
-                {Products = TestHelpers.MockDbSet(products), Categories = TestHelpers.MockDbSet(categories)};
+                {Products = TestHelper.MockDbSet(products), Categories = TestHelper.MockDbSet(categories)};
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             //Act
-            var result = await controller.Index(null, null, null) as ViewResult;
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<ProductIndexViewModel>(result.Model);
+            var model = await ControllerHelper.RunControllerAction<ProductIndexViewModel>(controller.Index(null, null, null));
 
             //Assert
             Assert.Equal(5, model.Products.Count());
@@ -71,24 +70,16 @@ namespace E_commercePIM.Tests.Controllers
                 new Product {Name = "A", Price = 20m},
             };
             var context = new WebshopContext
-                {Products = TestHelpers.MockDbSet(products), Categories = TestHelpers.MockDbSet<Category>()};
+                {Products = TestHelper.MockDbSet(products), Categories = TestHelper.MockDbSet<Category>()};
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             //Act
-            var model = await RunControllerAction<ProductIndexViewModel>(controller.Index(sortOrder, null, null));
+            var model = await ControllerHelper.RunControllerAction<ProductIndexViewModel>(controller.Index(sortOrder, null, null));
 
             //Assert
             var productsFromModel = model.Products.ToList();
             Assert.Equal(nameOfFirstProduct, productsFromModel[0].Name);
             Assert.Equal(priceOfFirstProduct, productsFromModel[0].Price);
-        }
-
-        private static async Task<T> RunControllerAction<T>(Task<ActionResult> asyncActionResult)
-        {
-            var result = await asyncActionResult as ViewResult;
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<T>(result.Model);
-            return model;
         }
 
         [Theory]
@@ -108,11 +99,11 @@ namespace E_commercePIM.Tests.Controllers
                 new Product {Name = "A", Price = 30m, Categories = new List<Category> {categoryB}},
             };
             var context = new WebshopContext
-                {Products = TestHelpers.MockDbSet(products), Categories = TestHelpers.MockDbSet(categories)};
+                {Products = TestHelper.MockDbSet(products), Categories = TestHelper.MockDbSet(categories)};
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             //Act
-            var model = await RunControllerAction<ProductIndexViewModel>(controller.Index(null, categoryQueryString, null));
+            var model = await ControllerHelper.RunControllerAction<ProductIndexViewModel>(controller.Index(null, categoryQueryString, null));
 
             //Assert
             Assert.Equal(numberOfProductsShown, model.Products.Count());
@@ -140,11 +131,11 @@ namespace E_commercePIM.Tests.Controllers
             };
 
             var context = new WebshopContext
-                {Products = TestHelpers.MockDbSet(productData), Categories = TestHelpers.MockDbSet(categoryData)};
+                {Products = TestHelper.MockDbSet(productData), Categories = TestHelper.MockDbSet(categoryData)};
 
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
-            var model = await RunControllerAction<ProductEditorViewModel>(controller.Editor(1, null));
+            var model = await ControllerHelper.RunControllerAction<ProductEditorViewModel>(controller.Editor(1, null));
 
             Assert.Equal(1, model.Id);
             Assert.Equal("ASUS X554L Laptop", model.Name);
@@ -169,7 +160,7 @@ namespace E_commercePIM.Tests.Controllers
                 }
             };
             var context = new WebshopContext
-                {Products = TestHelpers.MockDbSet(productData), Categories = TestHelpers.MockDbSet(categoryData)};
+                {Products = TestHelper.MockDbSet(productData), Categories = TestHelper.MockDbSet(categoryData)};
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             var viewModel = new ProductEditorViewModel
@@ -182,7 +173,7 @@ namespace E_commercePIM.Tests.Controllers
             await controller.Editor(viewModel);
 
 
-            var model = await RunControllerAction<ProductIndexViewModel>(controller.Index(null, null, null));
+            var model = await ControllerHelper.RunControllerAction<ProductIndexViewModel>(controller.Index(null, null, null));
 
             var product = model.Products.ToList()[0];
             Assert.Equal("ASUS Updated", product.Name);

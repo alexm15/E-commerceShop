@@ -165,10 +165,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ProductsControllerApprovalTests.cs" />
-    <Compile Include="Helpers\TestHelpers.cs" />
+    <Compile Include="Helpers\TestHelper.cs" />
     <Compile Include="Controllers\ProductsControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Controllers\HomeControllerTest.cs" />
     <Compile Include="Helpers\TestDbAsyncQueryProvider.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +191,10 @@
     <ProjectReference Include="..\..\E-commercePIM\E-commercePIM.csproj">
       <Project>{BD928A30-D8DC-454B-95DE-1C29B4D4B218}</Project>
       <Name>E-commercePIM</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TestHelpers\TestHelpers.csproj">
+      <Project>{0dc35372-ae97-4773-9302-8d25833d4a29}</Project>
+      <Name>TestHelpers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

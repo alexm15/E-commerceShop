@@ -6,7 +6,7 @@ using Moq;
 
 namespace E_commercePIM.Tests.Helpers
 {
-    public static class TestHelpers
+    public static class TestHelper
     {
         public static DbSet<T> MockDbSet<T>() where T : class
         {

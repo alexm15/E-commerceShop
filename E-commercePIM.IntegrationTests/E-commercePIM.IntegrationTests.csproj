@@ -131,6 +131,10 @@
       <Project>{bd928a30-d8dc-454b-95de-1c29b4d4b218}</Project>
       <Name>E-commercePIM</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TestHelpers\TestHelpers.csproj">
+      <Project>{0dc35372-ae97-4773-9302-8d25833d4a29}</Project>
+      <Name>TestHelpers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

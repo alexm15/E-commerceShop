@@ -24,7 +24,7 @@ namespace E_commercePIM.IntegrationTests
 
 
         [Fact]
-        public async Task TestIndexPage()
+        public async Task View_Index_Page()
         {
             //See seeded data in Configuration class (called from super class)
             
@@ -36,7 +36,7 @@ namespace E_commercePIM.IntegrationTests
         }
 
         [Fact]
-        public async Task TestEditorPage()
+        public async Task View_editor_page()
         {
             //See seeded data in Configuration class (called from super class)
 
@@ -49,10 +49,11 @@ namespace E_commercePIM.IntegrationTests
             Assert.Equal("Laptop computer", model.Description);
             Assert.Equal(5499M, model.Price);
             Assert.Equal(4, model.AvailableCategories.Count());
+            Assert.Equal(1, model.SelectedCategories.Count());
         }
 
         [Fact]
-        public async Task TestEditorPageUpdate()
+        public async Task Update_product_on_editor_page()
         {
             //See seeded data in Configuration class (called from super class)
 
@@ -77,7 +78,7 @@ namespace E_commercePIM.IntegrationTests
         }
 
         [Fact]
-        public async Task TestEditorPageCreate()
+        public async Task Create_new_product_on_editor_page()
         {
             //See seeded data in Configuration class (called from super class)
 
@@ -97,7 +98,7 @@ namespace E_commercePIM.IntegrationTests
         }
 
         [Fact]
-        public async Task TestDelete()
+        public async Task Delete_a_product()
         {
             //See seeded data in Configuration class (called from super class)
             var dbProduct = _context.Products.FirstOrDefault(p => p.Name.Equals("ASUS X554L Laptop"));
