@@ -1,22 +1,14 @@
 ﻿using System;
-using System.Activities.Statements;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
-using System.IO;
-using AutoMapper;
-using E_commerce.Data;
-using E_commerce.Data.Migrations;
-using E_commerce.Library;
-using E_commercePIM.Mapping;
-using Newtonsoft.Json;
-using Xunit;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Transactions;
+using System.IO;
+using AutoMapper;
+using Dapper;
+using E_commerce.Data;
+using E_commerce.Data.Migrations;
+using E_commercePIM.Mapping;
+using Newtonsoft.Json;
 
 
 namespace E_commercePIM.IntegrationTests
@@ -25,24 +17,32 @@ namespace E_commercePIM.IntegrationTests
     {
         protected WebshopContext _context;
         protected IMapper _mapper;
+        private const string CONNECTION_STRING = @"data source=(localdb)\MSSQLLocalDB;initial catalog=E-comWebshop-IntegrationTests;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework";
 
         public IntegrationTestBase()
         {
             _context = new WebshopContext();
-            _context.Database.CreateIfNotExists();
-            Seed();
+            ClearDatabase();
+            var migration = new MigrateDatabaseToLatestVersion<WebshopContext, Configuration>();
+            migration.InitializeDatabase(_context);
+
 
             var config = new MapperConfiguration(opts => { opts.AddProfile(new ViewModelsProfile()); });
             _mapper = config.CreateMapper();
 
-            //var configuration = new E_commerce.Data.Migrations.Configuration();
-            //var migrator = new DbMigrator(configuration);
-            //migrator.Update();
+            
         }
 
-        public void Seed()
+        private void ClearDatabase()
         {
-            new Configuration(_context);
+            using (var connection = new SqlConnection(CONNECTION_STRING))
+            {
+                string clearConnectionsCommand = @"ALTER DATABASE [E-ComWebshop-IntegrationTest] 
+                                                   SET SINGLE_USER WITH ROLLBACK IMMEDIATE;";
+                var affectedRows = connection.Execute(clearConnectionsCommand);
+            }
+            _context.Database.Delete();
+
         }
 
         private static List<T> LoadFromJson<T>(string jsonFileName)
@@ -53,6 +53,7 @@ namespace E_commercePIM.IntegrationTests
 
         public void Dispose()
         {
+
             _context.Database.Delete();
             _context.Dispose();
         }

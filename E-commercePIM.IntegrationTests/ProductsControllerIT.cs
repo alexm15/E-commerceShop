@@ -31,8 +31,8 @@ namespace E_commercePIM.IntegrationTests
             var result = await _productsController.Index(null, null, null) as ViewResult;
 
             Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
-            Assert.Equal(8, model.Count());
+            var model = Assert.IsAssignableFrom<ProductIndexViewModel>(result.Model);
+            Assert.Equal(8, model.Products.Count());
         }
 
         [Fact]
