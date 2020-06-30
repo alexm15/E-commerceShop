@@ -47,7 +47,7 @@ namespace E_commercePIM.Tests.Controllers
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             //Act
-            var model = await ControllerHelper.RunControllerAction<ProductIndexViewModel>(controller.Index(null, null, null));
+            var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(controller.Index(null, null, null));
 
             //Assert
             Assert.Equal(5, model.Products.Count());
@@ -74,7 +74,7 @@ namespace E_commercePIM.Tests.Controllers
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             //Act
-            var model = await ControllerHelper.RunControllerAction<ProductIndexViewModel>(controller.Index(sortOrder, null, null));
+            var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(controller.Index(sortOrder, null, null));
 
             //Assert
             var productsFromModel = model.Products.ToList();
@@ -103,7 +103,7 @@ namespace E_commercePIM.Tests.Controllers
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
             //Act
-            var model = await ControllerHelper.RunControllerAction<ProductIndexViewModel>(controller.Index(null, categoryQueryString, null));
+            var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(controller.Index(null, categoryQueryString, null));
 
             //Assert
             Assert.Equal(numberOfProductsShown, model.Products.Count());
@@ -135,7 +135,7 @@ namespace E_commercePIM.Tests.Controllers
 
             var controller = new ProductsController(new ProductRepository(context), _mapper, context);
 
-            var model = await ControllerHelper.RunControllerAction<ProductEditorViewModel>(controller.Editor(1, null));
+            var model = await ControllerHelper.ExecuteActionAsync<ProductEditorViewModel>(controller.Editor(1, null));
 
             Assert.Equal(1, model.Id);
             Assert.Equal("ASUS X554L Laptop", model.Name);
@@ -173,7 +173,7 @@ namespace E_commercePIM.Tests.Controllers
             await controller.Editor(viewModel);
 
 
-            var model = await ControllerHelper.RunControllerAction<ProductIndexViewModel>(controller.Index(null, null, null));
+            var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(controller.Index(null, null, null));
 
             var product = model.Products.ToList()[0];
             Assert.Equal("ASUS Updated", product.Name);

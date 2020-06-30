@@ -105,7 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CategoriesControllerIT.cs" />
-    <Compile Include="IntegrationTestBase.cs" />
+    <Compile Include="DatabaseTestBase.cs" />
     <Compile Include="ProductsControllerIT.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

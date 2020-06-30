@@ -11,14 +11,15 @@ using E_commerce.Data;
 using E_commerce.Data.Migrations;
 using E_commercePIM.Mapping;
 using Newtonsoft.Json;
+using Xunit;
 
 
 namespace E_commercePIM.IntegrationTests
 {
-    public class IntegrationTestBase : IDisposable
+    public class DatabaseTestBase : IDisposable
     {
-        protected static WebshopContext _context;
-        protected IMapper _mapper;
+        public WebshopContext _context;
+        public IMapper _mapper;
         private const string CONNECTION_STRING = @"data source=(localdb)\MSSQLLocalDB;initial catalog=E-comWebshop-IntegrationTests;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework";
 
         private static string FILENAME => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
@@ -31,10 +32,9 @@ namespace E_commercePIM.IntegrationTests
                 IntegratedSecurity = true
             };
 
-        public IntegrationTestBase()
+        public DatabaseTestBase()
         {
             DestroyDatabase();
-            _context = new WebshopContext();
             CreateDatabase();
 
 
@@ -42,7 +42,7 @@ namespace E_commercePIM.IntegrationTests
             _mapper = config.CreateMapper();
         }
 
-        private static void CreateDatabase()
+        private void CreateDatabase()
         {
             ExecuteSqlCommand(Master, $@"
                 CREATE DATABASE [E-comWebshop-IntegrationTests]
@@ -51,6 +51,7 @@ namespace E_commercePIM.IntegrationTests
 
             var migration = new MigrateDatabaseToLatestVersion<
                 WebshopContext, Configuration>();
+            _context = new WebshopContext();
             migration.InitializeDatabase(_context);
         }
 
@@ -71,11 +72,6 @@ namespace E_commercePIM.IntegrationTests
             }
         }
 
-
-        private static List<T> LoadFromJson<T>(string jsonFileName)
-        {
-            return JsonConvert.DeserializeObject<List<T>>(File.ReadAllText($@"..\..\{jsonFileName}"));
-        }
 
         private static void ExecuteSqlCommand(
             SqlConnectionStringBuilder connectionStringBuilder,
@@ -121,5 +117,13 @@ namespace E_commercePIM.IntegrationTests
         {
             DestroyDatabase();
         }
+    }
+
+    [CollectionDefinition("Database Tests")]
+    public class DatabaseTests : ICollectionFixture<DatabaseTestBase>
+    {
+        // This class has no code, and is never created. Its purpose is simply
+        // to be the place to apply [CollectionDefinition] and all the
+        // ICollectionFixture<> interfaces.
     }
 }

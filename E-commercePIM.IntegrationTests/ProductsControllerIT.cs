@@ -9,11 +9,12 @@ using E_commerce.Library;
 using E_commercePIM.Controllers;
 using E_commercePIM.Mapping;
 using E_commercePIM.ViewModels;
+using TestHelpers;
 using Xunit;
 
 namespace E_commercePIM.IntegrationTests
 {
-    public class ProductsControllerIT : IntegrationTestBase
+    public class ProductsControllerIT : DatabaseTestBase
     {
         private ProductsController _productsController;
 
@@ -27,10 +28,8 @@ namespace E_commercePIM.IntegrationTests
         public async Task View_Index_Page()
         {
             //See seeded data in Configuration class (called from super class)
-            
-            var result = await _productsController.Index(null, null, null) as ViewResult;
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<ProductIndexViewModel>(result.Model);
+            var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(
+                    _productsController.Index(null, null, null));
 
             Assert.Equal(8, model.Products.Count());
         }
@@ -39,11 +38,9 @@ namespace E_commercePIM.IntegrationTests
         public async Task View_editor_page()
         {
             //See seeded data in Configuration class (called from super class)
+            var model = await ControllerHelper.ExecuteActionAsync<ProductEditorViewModel>(
+                _productsController.Editor(1,null));
 
-            var result = await _productsController.Editor(1, null) as ViewResult;
-
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<ProductEditorViewModel>(result.Model);
             Assert.Equal(1, model.Id);
             Assert.Equal("ASUS X554L Laptop", model.Name);
             Assert.Equal("Laptop computer", model.Description);
@@ -56,7 +53,6 @@ namespace E_commercePIM.IntegrationTests
         public async Task Update_product_on_editor_page()
         {
             //See seeded data in Configuration class (called from super class)
-
             var viewModel = new ProductEditorViewModel
             {
                 Id = 1,
@@ -65,13 +61,11 @@ namespace E_commercePIM.IntegrationTests
             };
             
             await _productsController.Editor(viewModel);
+            var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(
+                _productsController.Index(null, null, null));
 
-
-            var result = await _productsController.Index(null, null, null) as ViewResult;
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
-            Assert.Equal(8, model.Count());
-            var product = model.ToList()[0];
+            Assert.Equal(8, model.Products.Count());
+            var product = model.Products.ToList()[0];
             Assert.Equal("ASUS Updated", product.Name);
             var productCategories = product.Categories.Select(c => c.Name).ToArray();
             Assert.Equal("Electronics,Office Supplies", string.Join(",", productCategories));
@@ -81,20 +75,17 @@ namespace E_commercePIM.IntegrationTests
         public async Task Create_new_product_on_editor_page()
         {
             //See seeded data in Configuration class (called from super class)
-
             var viewModel = new ProductEditorViewModel
             {
                 Name = "New Product",
             };
 
             await _productsController.Editor(viewModel);
+            var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(
+                _productsController.Index(null, null, null));
 
-
-            var result = await _productsController.Index(null, null, null) as ViewResult;
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
-            Assert.Equal(9, model.Count());
-            Assert.Contains(model, p => p.Name.Equals("New Product"));
+            Assert.Equal(9, model.Products.Count());
+            Assert.Contains(model.Products, p => p.Name.Equals("New Product"));
         }
 
         [Fact]
@@ -105,11 +96,11 @@ namespace E_commercePIM.IntegrationTests
             Assert.NotNull(dbProduct);
             await _productsController.Delete(dbProduct.Id);
 
-            var result = await _productsController.Index(null, null, null) as ViewResult;
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<IEnumerable<Product>>(result.Model);
-            Assert.Equal(7, model.Count());
-            Assert.DoesNotContain(model, p => p.Name.Equals("ASUS X554L Laptop"));
+            var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(
+                _productsController.Index(null, null, null));
+
+            Assert.Equal(7, model.Products.Count());
+            Assert.DoesNotContain(model.Products, p => p.Name.Equals("ASUS X554L Laptop"));
         }
 
 

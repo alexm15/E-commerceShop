@@ -6,28 +6,30 @@ using E_commerce.Data;
 using E_commerce.Library;
 using E_commercePIM.Controllers;
 using E_commercePIM.ViewModels;
+using TestHelpers;
 using Xunit;
 
 namespace E_commercePIM.IntegrationTests
 {
-    public class CategoriesControllerIT : IntegrationTestBase
+    [Collection("Database Tests")]
+    public class CategoriesControllerIT
     {
+        private readonly DatabaseTestBase _testBase;
         private CategoriesController _controller;
 
-        public CategoriesControllerIT()
+        
+        public CategoriesControllerIT(DatabaseTestBase testBase)
         {
-            _controller = new CategoriesController(new CategoryRepository(_context), _mapper, new ProductRepository(_context));
+            _testBase = testBase;
+            _controller = new CategoriesController(new CategoryRepository(_testBase._context), _testBase._mapper, new ProductRepository(_testBase._context));
         }
 
         [Fact]
         public async Task TestIndex()
         {
             //See seeded data in Configuration class (called from super class)
-            
-            var result = await _controller.Index() as ViewResult;
+            var model = await ControllerHelper.ExecuteActionAsync<CategoryIndexViewModel>(_controller.Index());
 
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<CategoryIndexViewModel>(result.Model);
             var categoyData = model.Categories.ToList();
             Assert.Equal(4, categoyData.Count());
             var category = categoyData[0];
@@ -39,11 +41,8 @@ namespace E_commercePIM.IntegrationTests
         public async Task TestEditorPage()
         {
             //See seeded data in Configuration class (called from super class)
+            var model = await ControllerHelper.ExecuteActionAsync<CategoryEditorViewModel>(_controller.Editor(1));
 
-            var result = await _controller.Editor(1) as ViewResult;
-
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<CategoryEditorViewModel>(result.Model);
             Assert.Equal(1, model.Id);
             Assert.Equal("Electronics", model.Name);
             Assert.Equal(8, model.AvailableProducts.Count());
@@ -62,11 +61,8 @@ namespace E_commercePIM.IntegrationTests
             };
 
             await _controller.Editor(viewModel);
+            var model = await ControllerHelper.ExecuteActionAsync<CategoryIndexViewModel>(_controller.Index());
 
-
-            var result = await _controller.Index() as ViewResult;
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<CategoryIndexViewModel>(result.Model);
             var category = model.Categories.ToList()[0];
             Assert.Equal("Electronics Updated", category.Name);
             Assert.Equal(3, category.ProductCount);
@@ -82,10 +78,8 @@ namespace E_commercePIM.IntegrationTests
             };
 
             await _controller.Editor(viewModel);
+            var model = await ControllerHelper.ExecuteActionAsync<CategoryIndexViewModel>(_controller.Index());
 
-            var result = await _controller.Index() as ViewResult;
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<CategoryIndexViewModel>(result.Model);
             Assert.Contains(model.Categories, c => c.Name.Equals("New Category"));
         }
 
@@ -97,10 +91,8 @@ namespace E_commercePIM.IntegrationTests
             Assert.NotNull(dbCategory);
             
             await _controller.Delete(dbCategory.Id);
+            var model = await ControllerHelper.ExecuteActionAsync<CategoryIndexViewModel>(_controller.Index());
 
-            var result = await _controller.Index() as ViewResult;
-            Assert.NotNull(result);
-            var model = Assert.IsAssignableFrom<CategoryIndexViewModel>(result.Model);
             Assert.Equal(3, model.Categories.Count());
             Assert.DoesNotContain(model.Categories, c => c.Name.Equals("Electronics"));
         }
