@@ -18,8 +18,8 @@ namespace E_commercePIM.IntegrationTests
 {
     public class DatabaseTestBase : IDisposable
     {
-        public WebshopContext _context;
-        public IMapper _mapper;
+        public WebshopContext Context { get; private set; }
+        public IMapper Mapper { get; }
         private const string CONNECTION_STRING = @"data source=(localdb)\MSSQLLocalDB;initial catalog=E-comWebshop-IntegrationTests;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework";
 
         private static string FILENAME => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
@@ -39,7 +39,7 @@ namespace E_commercePIM.IntegrationTests
 
 
             var config = new MapperConfiguration(opts => { opts.AddProfile(new ViewModelsProfile()); });
-            _mapper = config.CreateMapper();
+            Mapper = config.CreateMapper();
         }
 
         private void CreateDatabase()
@@ -51,8 +51,8 @@ namespace E_commercePIM.IntegrationTests
 
             var migration = new MigrateDatabaseToLatestVersion<
                 WebshopContext, Configuration>();
-            _context = new WebshopContext();
-            migration.InitializeDatabase(_context);
+            Context = new WebshopContext();
+            migration.InitializeDatabase(Context);
         }
 
         private static void DestroyDatabase()

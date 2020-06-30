@@ -12,16 +12,16 @@ using Xunit;
 namespace E_commercePIM.IntegrationTests
 {
     [Collection("Database Tests")]
-    public class CategoriesControllerIT
+    public class CategoriesControllerIT : IntegrationTestBase
     {
-        private readonly DatabaseTestBase _testBase;
+        private readonly DatabaseTestBase _dbBase;
         private CategoriesController _controller;
 
-        
-        public CategoriesControllerIT(DatabaseTestBase testBase)
+
+        public CategoriesControllerIT(DatabaseTestBase dbBase)
         {
-            _testBase = testBase;
-            _controller = new CategoriesController(new CategoryRepository(_testBase._context), _testBase._mapper, new ProductRepository(_testBase._context));
+            _dbBase = dbBase;
+            _controller = new CategoriesController(new CategoryRepository(_dbBase.Context), _dbBase.Mapper, new ProductRepository(_dbBase.Context));
         }
 
         [Fact]
@@ -35,6 +35,7 @@ namespace E_commercePIM.IntegrationTests
             var category = categoyData[0];
             Assert.Equal("Electronics", category.Name);
             Assert.Equal(2, category.ProductCount);
+
         }
 
         [Fact]
@@ -87,9 +88,9 @@ namespace E_commercePIM.IntegrationTests
         public async Task TestDelete()
         {
             //See seeded data in Configuration class (called from super class)
-            var dbCategory = _context.Categories.FirstOrDefault(c => c.Name.Equals("Electronics"));
+            var dbCategory = _dbBase.Context.Categories.FirstOrDefault(c => c.Name.Equals("Electronics"));
             Assert.NotNull(dbCategory);
-            
+
             await _controller.Delete(dbCategory.Id);
             var model = await ControllerHelper.ExecuteActionAsync<CategoryIndexViewModel>(_controller.Index());
 

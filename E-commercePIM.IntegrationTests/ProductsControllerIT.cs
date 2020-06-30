@@ -14,13 +14,16 @@ using Xunit;
 
 namespace E_commercePIM.IntegrationTests
 {
-    public class ProductsControllerIT : DatabaseTestBase
+    [Collection("Database Tests")]
+    public class ProductsControllerIT : IntegrationTestBase
     {
-        private ProductsController _productsController;
+        private readonly DatabaseTestBase _dbBase;
+        private readonly ProductsController _productsController;
 
-        public ProductsControllerIT()
+        public ProductsControllerIT(DatabaseTestBase dbBase)
         {
-            _productsController = new ProductsController(new ProductRepository(_context), _mapper, _context);
+            _dbBase = dbBase;
+            _productsController = new ProductsController(new ProductRepository(_dbBase.Context), _dbBase.Mapper, _dbBase.Context);
         }
 
 
@@ -92,7 +95,7 @@ namespace E_commercePIM.IntegrationTests
         public async Task Delete_a_product()
         {
             //See seeded data in Configuration class (called from super class)
-            var dbProduct = _context.Products.FirstOrDefault(p => p.Name.Equals("ASUS X554L Laptop"));
+            var dbProduct = _dbBase.Context.Products.FirstOrDefault(p => p.Name.Equals("ASUS X554L Laptop"));
             Assert.NotNull(dbProduct);
             await _productsController.Delete(dbProduct.Id);
 
