@@ -15,6 +15,7 @@ using Xunit;
 namespace E_commercePIM.IntegrationTests
 {
     [Collection("Database Tests")]
+    [Trait("Product IT", "Integration Tests E-commercePIM")]
     public class ProductsControllerIT : IntegrationTestBase
     {
         private readonly DatabaseTestBase _dbBase;
@@ -26,9 +27,8 @@ namespace E_commercePIM.IntegrationTests
             _productsController = new ProductsController(new ProductRepository(Context), _dbBase.Mapper, Context);
         }
 
-
-        [Fact]
-        public async Task View_Index_Page()
+        [Fact(DisplayName = "Index Page contains list of products")]
+        public async Task IndexPage()
         {
             //See seeded data in Configuration class (called from super class)
             var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(
@@ -37,8 +37,8 @@ namespace E_commercePIM.IntegrationTests
             Assert.Equal(8, model.Products.Count());
         }
 
-        [Fact]
-        public async Task View_editor_page()
+        [Fact(DisplayName = "Editor page shows details of product and both selected and available categories")]
+        public async Task ShowEditorPage()
         {
             //See seeded data in Configuration class (called from super class)
             var model = await ControllerHelper.ExecuteActionAsync<ProductEditorViewModel>(
@@ -52,8 +52,8 @@ namespace E_commercePIM.IntegrationTests
             Assert.Equal(1, model.SelectedCategories.Count());
         }
 
-        [Fact]
-        public async Task Update_product_on_editor_page()
+        [Fact(DisplayName = "Update on EditorPage updates details of product")]
+        public async Task UpdateProductEditorPage()
         {
             //See seeded data in Configuration class (called from super class)
             var viewModel = new ProductEditorViewModel
@@ -74,8 +74,8 @@ namespace E_commercePIM.IntegrationTests
             Assert.Equal("Electronics,Office Supplies", string.Join(",", productCategories));
         }
 
-        [Fact]
-        public async Task Create_new_product_on_editor_page()
+        [Fact(DisplayName = "Create Product on editor page adds new product")]
+        public async Task CreateProductWithEditorPage()
         {
             //See seeded data in Configuration class (called from super class)
             var viewModel = new ProductEditorViewModel
@@ -91,8 +91,8 @@ namespace E_commercePIM.IntegrationTests
             Assert.Contains(model.Products, p => p.Name.Equals("New Product"));
         }
 
-        [Fact]
-        public async Task Delete_a_product()
+        [Fact(DisplayName = "Delete removes product from app")]
+        public async Task DeleteProductPage()
         {
             //See seeded data in Configuration class (called from super class)
             var dbProduct = Context.Products.FirstOrDefault(p => p.Name.Equals("ASUS X554L Laptop"));

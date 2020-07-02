@@ -12,6 +12,7 @@ using Xunit;
 namespace E_commercePIM.IntegrationTests
 {
     [Collection("Database Tests")]
+    [Trait("Category IT", "Integration Tests E-commercePIM")]
     public class CategoriesControllerIT : IntegrationTestBase
     {
         private readonly DatabaseTestBase _dbBase;
@@ -24,8 +25,8 @@ namespace E_commercePIM.IntegrationTests
             _controller = new CategoriesController(new CategoryRepository(Context), _dbBase.Mapper, new ProductRepository(Context));
         }
 
-        [Fact]
-        public async Task TestIndex()
+        [Fact(DisplayName = "Index page returns list of category and product count on each category")]
+        public async Task IndexPageCategories()
         {
             //See seeded data in Configuration class (called from super class)
             var model = await ControllerHelper.ExecuteActionAsync<CategoryIndexViewModel>(_controller.Index());
@@ -38,8 +39,8 @@ namespace E_commercePIM.IntegrationTests
 
         }
 
-        [Fact]
-        public async Task TestEditorPage()
+        [Fact(DisplayName = "Editor page returns details of category and list of available product to add to category")]
+        public async Task EditorPage()
         {
             //See seeded data in Configuration class (called from super class)
             var model = await ControllerHelper.ExecuteActionAsync<CategoryEditorViewModel>(_controller.Editor(1));
@@ -49,8 +50,8 @@ namespace E_commercePIM.IntegrationTests
             Assert.Equal(8, model.AvailableProducts.Count());
         }
 
-        [Fact]
-        public async Task TestEditorPageUpdate()
+        [Fact(DisplayName = "Update Category on editor page changes the details of the category")]
+        public async Task UpdateEditorPage()
         {
             //See seeded data in Configuration class (called from super class)
 
@@ -62,7 +63,6 @@ namespace E_commercePIM.IntegrationTests
             };
 
             await _controller.Editor(viewModel);
-            var dbCategory = Context.Categories.Find(1);
 
             var model = await ControllerHelper.ExecuteActionAsync<CategoryIndexViewModel>(_controller.Index());
 
@@ -71,8 +71,8 @@ namespace E_commercePIM.IntegrationTests
             Assert.Equal(3, category.ProductCount);
         }
 
-        [Fact]
-        public async Task TestEditorPageCreate()
+        [Fact(DisplayName = "Creating category on editor page adds new product")]
+        public async Task CreateEditorPage()
         {
             //See seeded data in Configuration class (called from super class)
             var viewModel = new CategoryEditorViewModel
@@ -86,8 +86,8 @@ namespace E_commercePIM.IntegrationTests
             Assert.Contains(model.Categories, c => c.Name.Equals("New Category"));
         }
 
-        [Fact]
-        public async Task TestDelete()
+        [Fact(DisplayName = "Delete category removes that category from app")]
+        public async Task DeleteCategory()
         {
             //See seeded data in Configuration class (called from super class)
             var dbCategory = Context.Categories.FirstOrDefault(c => c.Name.Equals("Electronics"));

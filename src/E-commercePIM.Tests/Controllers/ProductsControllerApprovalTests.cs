@@ -14,6 +14,7 @@ using Xunit;
 namespace E_commercePIM.Tests.Controllers
 {
     [UseReporter(typeof(DiffReporter))]
+    [Trait("Product", "Approval Tests E-commercePIM")]
     public class ProductsControllerApprovalTests : MvcTest
     {
         private IMapper _mapper;
