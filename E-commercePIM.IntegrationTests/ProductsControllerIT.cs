@@ -52,6 +52,8 @@ namespace E_commercePIM.IntegrationTests
             Assert.Equal(1, model.SelectedCategories.Count());
         }
 
+
+
         [Fact(DisplayName = "Update on EditorPage updates details of product")]
         public async Task UpdateProductEditorPage()
         {
