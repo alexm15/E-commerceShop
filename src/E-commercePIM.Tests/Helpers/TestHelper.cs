@@ -21,13 +21,7 @@ namespace E_commercePIM.Tests.Helpers
 
             var data = input.AsQueryable();
 
-            mockSet.Setup(m => m.Add(It.IsAny<T>())).Callback<T>(input.Add);
-            mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(data.Expression);
-            mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
-            mockSet.Setup(x => x.AsNoTracking()).Returns(mockSet.Object);
-            mockSet.Setup(x => x.Include(It.IsAny<string>())).Returns(mockSet.Object);
-
+            //Async Operations needs to be configured before normal, else they won't work
             mockSet.As<IDbAsyncEnumerable<T>>()
                 .Setup(m => m.GetAsyncEnumerator())
                 .Returns(new TestDbAsyncEnumerator<T>(data.GetEnumerator()));
@@ -35,6 +29,16 @@ namespace E_commercePIM.Tests.Helpers
             mockSet.As<IQueryable<T>>()
                 .Setup(m => m.Provider)
                 .Returns(new TestDbAsyncQueryProvider<T>(data.Provider));
+
+            //Regular operations
+            mockSet.Setup(m => m.Add(It.IsAny<T>())).Callback<T>(input.Add);
+            mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(data.Expression);
+            mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(data.ElementType);
+            mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+            mockSet.Setup(x => x.AsNoTracking()).Returns(mockSet.Object);
+            mockSet.Setup(x => x.Include(It.IsAny<string>())).Returns(mockSet.Object);
+
+            
 
             return mockSet.Object;
         }
