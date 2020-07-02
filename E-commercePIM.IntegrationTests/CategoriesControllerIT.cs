@@ -21,7 +21,7 @@ namespace E_commercePIM.IntegrationTests
         public CategoriesControllerIT(DatabaseTestBase dbBase)
         {
             _dbBase = dbBase;
-            _controller = new CategoriesController(new CategoryRepository(_dbBase.Context), _dbBase.Mapper, new ProductRepository(_dbBase.Context));
+            _controller = new CategoriesController(new CategoryRepository(Context), _dbBase.Mapper, new ProductRepository(Context));
         }
 
         [Fact]
@@ -62,6 +62,8 @@ namespace E_commercePIM.IntegrationTests
             };
 
             await _controller.Editor(viewModel);
+            var dbCategory = Context.Categories.Find(1);
+
             var model = await ControllerHelper.ExecuteActionAsync<CategoryIndexViewModel>(_controller.Index());
 
             var category = model.Categories.ToList()[0];
@@ -88,7 +90,7 @@ namespace E_commercePIM.IntegrationTests
         public async Task TestDelete()
         {
             //See seeded data in Configuration class (called from super class)
-            var dbCategory = _dbBase.Context.Categories.FirstOrDefault(c => c.Name.Equals("Electronics"));
+            var dbCategory = Context.Categories.FirstOrDefault(c => c.Name.Equals("Electronics"));
             Assert.NotNull(dbCategory);
 
             await _controller.Delete(dbCategory.Id);

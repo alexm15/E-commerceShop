@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Transactions;
 using E_commerce.Data;
 
@@ -7,21 +6,19 @@ namespace E_commercePIM.IntegrationTests
 {
     public class IntegrationTestBase : IDisposable
     {
-        private readonly WebshopContext _context;
-        protected TransactionScope _scope;
-        private DbContextTransaction _transaction;
+        private TransactionScope _scope;
+        public WebshopContext Context { get;}
 
-        public IntegrationTestBase(WebshopContext context)
+        protected IntegrationTestBase()
         {
-            _context = context;
-            _transaction = _context.Database.BeginTransaction();
+            Context = new WebshopContext(); //Create new for each test as the Context keeps a in-memory cache of DbSets and changes to them
+            _scope = new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled);
         }
 
         public void Dispose()
         {
-            _transaction?.Rollback();
-            _transaction?.Dispose();
-            _transaction = null;
+            _scope?.Dispose();
+            _scope = null;
         }
     }
 }

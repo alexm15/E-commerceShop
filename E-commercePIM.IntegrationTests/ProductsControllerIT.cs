@@ -23,7 +23,7 @@ namespace E_commercePIM.IntegrationTests
         public ProductsControllerIT(DatabaseTestBase dbBase)
         {
             _dbBase = dbBase;
-            _productsController = new ProductsController(new ProductRepository(_dbBase.Context), _dbBase.Mapper, _dbBase.Context);
+            _productsController = new ProductsController(new ProductRepository(Context), _dbBase.Mapper, Context);
         }
 
 
@@ -95,7 +95,7 @@ namespace E_commercePIM.IntegrationTests
         public async Task Delete_a_product()
         {
             //See seeded data in Configuration class (called from super class)
-            var dbProduct = _dbBase.Context.Products.FirstOrDefault(p => p.Name.Equals("ASUS X554L Laptop"));
+            var dbProduct = Context.Products.FirstOrDefault(p => p.Name.Equals("ASUS X554L Laptop"));
             Assert.NotNull(dbProduct);
             await _productsController.Delete(dbProduct.Id);
 
