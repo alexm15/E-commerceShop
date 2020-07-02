@@ -11,6 +11,7 @@ using E_commerce.Data;
 using E_commerce.Data.Migrations;
 using E_commercePIM.Mapping;
 using Newtonsoft.Json;
+using TestHelpers;
 using Xunit;
 
 
@@ -38,8 +39,7 @@ namespace E_commercePIM.IntegrationTests
             CreateDatabase();
 
 
-            var config = new MapperConfiguration(opts => { opts.AddProfile(new ViewModelsProfile()); });
-            Mapper = config.CreateMapper();
+            Mapper = new MapperForTests().Mapper;
         }
 
         private void CreateDatabase()

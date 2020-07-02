@@ -17,14 +17,12 @@ namespace E_commercePIM.Tests.Controllers
     [Trait("Product", "Unit Tests E-commercePIM")]
     public class ProductsControllerTests
     {
-        private IMapper _mapper;
+        private readonly MapperForTests _mapperForTests;
 
         public ProductsControllerTests()
         {
-            var config = new MapperConfiguration(opts => { opts.AddProfile(new ViewModelsProfile()); });
-            _mapper = config.CreateMapper();
+            _mapperForTests = new MapperForTests();
         }
-
 
 
         [Theory(DisplayName = "Index can return products sorted in various ways ")]
@@ -43,7 +41,7 @@ namespace E_commercePIM.Tests.Controllers
             };
             var context = new WebshopContext
                 {Products = TestHelper.MockDbSet(products), Categories = TestHelper.MockDbSet<Category>()};
-            var controller = new ProductsController(new ProductRepository(context), _mapper, context);
+            var controller = new ProductsController(new ProductRepository(context), _mapperForTests.Mapper, context);
 
             //Act
             var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(controller.Index(sortOrder, null, null));
@@ -72,7 +70,7 @@ namespace E_commercePIM.Tests.Controllers
             };
             var context = new WebshopContext
                 {Products = TestHelper.MockDbSet(products), Categories = TestHelper.MockDbSet(categories)};
-            var controller = new ProductsController(new ProductRepository(context), _mapper, context);
+            var controller = new ProductsController(new ProductRepository(context), _mapperForTests.Mapper, context);
 
             //Act
             var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(controller.Index(null, categoryQueryString, null));

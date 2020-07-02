@@ -9,6 +9,7 @@ using E_commercePIM.Controllers;
 using E_commercePIM.Mapping;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using TestHelpers;
 using Xunit;
 
 namespace E_commercePIM.Tests.Controllers
@@ -18,11 +19,11 @@ namespace E_commercePIM.Tests.Controllers
     public class ProductsControllerApprovalTests : MvcTest
     {
         private IMapper _mapper;
+        private readonly MapperForTests _mapConfig;
 
         public ProductsControllerApprovalTests()
         {
-            var config = new MapperConfiguration(opts => { opts.AddProfile(new ViewModelsProfile()); });
-            _mapper = config.CreateMapper();
+            _mapConfig = new MapperForTests();
         }
     }
 
