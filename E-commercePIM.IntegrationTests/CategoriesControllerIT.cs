@@ -31,12 +31,15 @@ namespace E_commercePIM.IntegrationTests
             //See seeded data in Configuration class (called from super class)
             var model = await ControllerHelper.ExecuteActionAsync<CategoryIndexViewModel>(_controller.Index());
 
-            var categoyData = model.Categories.ToList();
-            Assert.Equal(4, categoyData.Count());
-            var category = categoyData[0];
-            Assert.Equal("Electronics", category.Name);
-            Assert.Equal(2, category.ProductCount);
+            var categories = model.Categories.ToList();
+            Assert.Equal(4, categories.Count());
+            AssertNameAndProductCountFor(categories[0], "Electronics", 2);
+        }
 
+        private static void AssertNameAndProductCountFor(CategoryDataViewModel category, string expectedName, int expectedProductCount)
+        {
+            Assert.Equal(expectedName, category.Name);
+            Assert.Equal(expectedProductCount, category.ProductCount);
         }
 
         [Fact(DisplayName = "Editor page returns details of category and list of available product to add to category")]
@@ -67,8 +70,7 @@ namespace E_commercePIM.IntegrationTests
             var model = await ControllerHelper.ExecuteActionAsync<CategoryIndexViewModel>(_controller.Index());
 
             var category = model.Categories.ToList()[0];
-            Assert.Equal("Electronics Updated", category.Name);
-            Assert.Equal(3, category.ProductCount);
+            AssertNameAndProductCountFor(category, "Electronics Updated", 3);
         }
 
         [Fact(DisplayName = "Creating category on editor page adds new product")]

@@ -48,8 +48,13 @@ namespace E_commercePIM.Tests.Controllers
 
             //Assert
             var productsFromModel = model.Products.ToList();
-            Assert.Equal(nameOfFirstProduct, productsFromModel[0].Name);
-            Assert.Equal(priceOfFirstProduct, productsFromModel[0].Price);
+            AssertNameAndPrice(nameOfFirstProduct, priceOfFirstProduct, productsFromModel[0]);
+        }
+
+        private static void AssertNameAndPrice(string expectedName, decimal expectedPrice, Product actualProduct)
+        {
+            Assert.Equal(expectedName, actualProduct.Name);
+            Assert.Equal(expectedPrice, actualProduct.Price);
         }
 
         [Theory(DisplayName = "Index can return products filtered by selected category")]
@@ -78,8 +83,7 @@ namespace E_commercePIM.Tests.Controllers
             //Assert
             Assert.Equal(numberOfProductsShown, model.Products.Count());
             var productsFromModel = model.Products.ToList();
-            Assert.Equal(nameOfFirstProduct, productsFromModel[0].Name);
-            Assert.Equal(priceOfFirstProduct, productsFromModel[0].Price);
+            AssertNameAndPrice(nameOfFirstProduct, priceOfFirstProduct, productsFromModel[0]);
         }
 
     }
