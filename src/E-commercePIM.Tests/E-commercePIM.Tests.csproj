@@ -164,6 +164,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ProductBuilder.cs" />
     <Compile Include="Controllers\ProductsControllerApprovalTests.cs" />
     <Compile Include="Helpers\TestHelper.cs" />
     <Compile Include="Controllers\ProductsControllerTests.cs" />

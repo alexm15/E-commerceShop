@@ -112,8 +112,6 @@ namespace E_commercePIM.Tests.Controllers
             IList<Product> products = new List<Product> {new Product {Id = 1},};
             var controller = CreateProductController(products, new List<Category>());
 
-
-            //See seeded data in Configuration class (called from super class)
             var model = await ControllerHelper.ExecuteActionAsync<ProductEditorViewModel>(
                 controller.Editor(1, null));
 
@@ -125,18 +123,16 @@ namespace E_commercePIM.Tests.Controllers
         [Fact(DisplayName = "Editor page where variantId has value shows variant tab with details")]
         public async Task EditorPageVariantTab()
         {
-            var product = new ProductBuilder()
-                    .WithName("A")
-                    .WithPrice(20m)
-                    .WithVariant(2, "A Variant", 50m)
-                    .Build();
-            var parentProduct = new Product {Id = 1, Name = "A", Price = 20m};
             var productVariant = new Product
-                {Id = 2, Name = "A Variant", Price = 50m, ParentId = 1, ParentProduct = parentProduct};
-            parentProduct.Variants = new List<Product> {productVariant};
+                {Id = 2, Name = "Movie Deluxe", Price = 250m};
+            var product = new ProductBuilder()
+                .SimpleMovie(1)
+                .WithVariant(productVariant)
+                .Build();
+
             IList<Product> products = new List<Product>
             {
-                parentProduct,
+                product,
                 productVariant,
             };
             var controller = CreateProductController(products, new List<Category>());
@@ -150,9 +146,11 @@ namespace E_commercePIM.Tests.Controllers
             Assert.Null(model.ShowGeneralPage);
 
             Assert.Equal(2, model.VariantId);
-            Assert.Equal("A Variant", model.VariantName);
-            Assert.Equal(50m, model.VariantPrice);
+            Assert.Equal("Movie Deluxe", model.VariantName);
+            Assert.Equal(250m, model.VariantPrice);
         }
+
+
 
         private ProductsController CreateProductController(IList<Product> products, IList<Category> categories)
         {
@@ -160,62 +158,6 @@ namespace E_commercePIM.Tests.Controllers
                 {Products = TestHelper.MockDbSet(products), Categories = TestHelper.MockDbSet(categories)};
             var controller = new ProductsController(new ProductRepository(context), _mapperForTests.Mapper, context);
             return controller;
-        }
-    }
-
-    public class ProductBuilder
-    {
-        private readonly Product _product = new Product();
-
-        public ProductBuilder WithName(string name)
-        {
-            _product.Name = name;
-            return this;
-        }
-
-        public ProductBuilder WithPrice(decimal price)
-        {
-            _product.Price = price;
-            return this;
-        }
-
-        public ProductBuilder WithDescription(string description)
-        {
-            _product.Description = description;
-            return this;
-        }
-
-        public ProductBuilder WithVariant(int variantId, string variantName, decimal variantPrice)
-        {
-            var variant = new Product
-            {
-                Id = variantId, Name = variantName, Price = variantPrice, ParentId = _product.Id,
-                ParentProduct = _product
-            };
-            _product.Variants.Add(variant);
-            return this;
-        }
-
-        public ProductBuilder SimpleLaptop(int id, string name = "Laptop", decimal price = 4000m,
-            string description = "This is a simple test laptop")
-        {
-            return WithId(id).WithName(name).WithPrice(price).WithDescription(description);
-        }
-
-        public ProductBuilder WithId(int id)
-        {
-            _product.Id = id;
-            return this;
-        }
-
-        public ProductBuilder SimpleLaptopWithVariants(int parentId, int variantId, string variantName, decimal variantPrice)
-        {
-            return SimpleLaptop(parentId).WithVariant(variantId, variantName, variantPrice);
-        }
-
-        public Product Build()
-        {
-            return _product;
         }
     }
 }
