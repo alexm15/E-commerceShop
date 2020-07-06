@@ -93,6 +93,23 @@ namespace E_commercePIM.IntegrationTests
             Assert.Contains(model.Products, p => p.Name.Equals("New Product"));
         }
 
+        [Fact(DisplayName = "Add Product Variant adds new product to DB and adds relationship")]
+        public async Task AddProductVariant()
+        {
+            //See seeded data in Configuration class (called from super class)
+            var viewModel = new ProductEditorViewModel
+            {
+                Name = "New Product",
+            };
+
+            await _productsController.Editor(viewModel);
+            var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(
+                _productsController.Index(null, null, null));
+
+            Assert.Equal(9, model.Products.Count());
+            Assert.Contains(model.Products, p => p.Name.Equals("New Product"));
+        }
+
         [Fact(DisplayName = "Delete removes product from app")]
         public async Task DeleteProductPage()
         {
