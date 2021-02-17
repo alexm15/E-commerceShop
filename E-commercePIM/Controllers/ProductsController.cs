@@ -42,11 +42,17 @@ namespace E_commercePIM.Controllers
             return View(model);
         }
 
-        public async Task<ActionResult> Editor(int? id, int? variantId)
+        public async Task<ActionResult> Editor(int? id, int? variantId, bool? addNewVariant = false)
         {
             var product = await _repository.GetProductAsync(id);
             var model = _mapper.Map<ProductEditorViewModel>(product);
             model.CurrentProductVariants = product.Variants.ToList();
+            model.VariantButtonName = "Add Variant";
+            
+            if (variantId != null || addNewVariant == true)
+                model.ShowVariantPage = "active";
+            else model.ShowGeneralPage = "active";
+
             if (variantId != null)
             {
                 var variant = await _repository.GetProductAsync(variantId);
@@ -54,15 +60,10 @@ namespace E_commercePIM.Controllers
                 model.VariantName = variant.Name;
                 model.VariantPrice = variant.Price;
                 model.VariantButtonName = "Save";
-                model.ShowVariantPage = "active";
-            }
-            else
-            {
-                model.VariantButtonName = "Add Variant";
-                model.ShowGeneralPage = "active";
-            }
+            } 
+
             PopulateNavigationData(model, product);
-            
+
             return View(model);
         }
 
@@ -96,40 +97,42 @@ namespace E_commercePIM.Controllers
         public async Task<ActionResult> Delete(int id)
         {
             var productToDelete = await _repository.GetProductAsync(id);
-            
+
             await _repository.DeleteAsync(id);
-            
-            if (productToDelete.ParentId != null) return RedirectToAction(nameof(Editor), new {id = productToDelete.ParentId});
+
+            if (productToDelete.ParentId != null) return RedirectToAction(nameof(Editor), new { id = productToDelete.ParentId });
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddOrEditVariant(ProductEditorViewModel model)
+        public async Task<ActionResult> UpdateVariant(ProductEditorViewModel model)
         {
-            var existingOrNewProduct = await _repository.GetProductAsync(model.VariantId);
-            if (existingOrNewProduct != null)
-            {
-                existingOrNewProduct.Name = model.VariantName;
-                existingOrNewProduct.Price = model.VariantPrice;
-            }
-            else
-            {
-                var variantName = $"{model.Name} {model.VariantName}";
-                existingOrNewProduct = new Product //existing product becomes new product instead
-                {
-                    ParentId = model.Id,
-                    Name = variantName,
-                    Price = model.VariantPrice,
-                    Description = model.Description,
-                };
-            }
+            var dbProduct = await _repository.GetProductAsync(model.VariantId);
+            if (dbProduct == null)
+                return HttpNotFound();
             
+            dbProduct.Name = model.VariantName;
+            dbProduct.Price = model.VariantPrice;
 
-            await _repository.AddOrUpdateProduct(existingOrNewProduct, new HashSet<int>(model.SelectedCategories));
-            var createdProductFromDB = await _context.Products.SingleAsync(p => p.Name == existingOrNewProduct.Name);
+            await _repository.AddOrUpdateProduct(dbProduct, new HashSet<int>(model.SelectedCategories));
 
-            return RedirectToAction(nameof(Editor), new {id = model.Id, variantId = createdProductFromDB.Id});
+            return RedirectToAction(nameof(Editor), new { id = model.Id, variantId = dbProduct.Id });
+        }
 
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddVariant(ProductEditorViewModel model)
+        {
+            var variantName = $"{model.Name} {model.VariantName}";
+            var product = new Product //existing product becomes new product instead
+            {
+                ParentId = model.Id,
+                Name = variantName,
+                Price = model.VariantPrice,
+                Description = model.Description,
+            };
+
+            await _repository.AddOrUpdateProduct(product, new HashSet<int>(model.SelectedCategories));
+            return RedirectToAction(nameof(Editor), new { id = model.Id, addNewVariant = true });
         }
     }
 }

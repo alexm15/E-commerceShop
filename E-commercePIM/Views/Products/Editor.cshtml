@@ -7,7 +7,7 @@
 <div class="row">
     <h2 class="col-md-5">@Model.Name</h2>
     <div class="col-md-6">
-        @Html.ActionLink("Delete", "Delete", new {id = @Model.Id}, new {@class = "btn btn-danger top-button"})
+        @Html.ActionLink("Delete", "Delete", new { id = @Model.Id }, new { @class = "btn btn-danger top-button" })
     </div>
 
 </div>
@@ -23,7 +23,7 @@
     </ul>
 </div>
 
-<br/>
+<br />
 
 <!-- Tab panes -->
 <div class="tab-content">
@@ -32,50 +32,50 @@
         {
             <div class="row">
                 @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                 @Html.HiddenFor(model => model.Id)
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(model => model.Name)
-                        @Html.EditorFor(model => model.Name, new {htmlAttributes = new {@class = "form-control"}})
-                        @Html.ValidationMessageFor(model => model.Name, "", new {@class = "text-danger"})
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
                     </div>
 
                     <div class="form-group">
                         @Html.LabelFor(model => model.Price)
-                        @Html.EditorFor(model => model.Price, new {htmlAttributes = new {@class = "form-control"}})
-                        @Html.ValidationMessageFor(model => model.Price, "", new {@class = "text-danger"})
+                        @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
                     </div>
 
                     <div class="form-group">
                         @Html.LabelFor(model => model.Description)
-                        @Html.TextAreaFor(model => model.Description, 5, 5, new {@class = "form-control"})
-                        @Html.ValidationMessageFor(model => model.Description, "", new {@class = "text-danger"})
+                        @Html.TextAreaFor(model => model.Description, 5, 5, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
                     </div>
 
                     <div class="form-group">
-                        <input type="submit" value="Save" class="btn btn-default"/>
+                        <input type="submit" value="Save" class="btn btn-default" />
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(model => model.SelectedCategories, "Categories (hold ctrl to select more than one):")
-                        @Html.ListBoxFor(model => model.SelectedCategories, Model.AvailableCategories, new {@class = "form-control", size = 10})
+                        @Html.ListBoxFor(model => model.SelectedCategories, Model.AvailableCategories, new { @class = "form-control", size = 10 })
                     </div>
                 </div>
             </div>
         }
     </div>
     <div role="tabpanel" class="tab-pane @Model.ShowVariantPage" id="variants">
-        @using (Html.BeginForm("AddOrEditVariant", "Products"))
+        @using (Html.BeginForm())
         {
             @Html.AntiForgeryToken()
             @Html.HiddenFor(model => model.Id)
             @Html.HiddenFor(model => model.Name)
             @Html.HiddenFor(model => model.Description)
             @Html.HiddenFor(model => model.VariantId)
-            for(var i = 0; i < Model.SelectedCategories.Count; i++)
+            for (var i = 0; i < Model.SelectedCategories.Count; i++)
             {
                 @Html.HiddenFor(model => Model.SelectedCategories[i])
             }
@@ -90,14 +90,22 @@
                 </div>
             </div>
             <div class="form-group">
-                <input type="submit" value="@Model.VariantButtonName" class="btn btn-success" />
+                @if (Model.VariantButtonName.Equals("Save"))
+                {
+                    <input type="submit" value="@Model.VariantButtonName" name="submit" class="btn btn-success" formaction=@Url.Action("UpdateVariant") formmethod="post" />
+                }
+                else
+                {
+                    <input type="submit" value="@Model.VariantButtonName" name="submit" class="btn btn-success" formaction=@Url.Action("AddVariant") formmethod="post" />
+                }
             </div>
         }
+
         <table class="table table-responsive table-bordered table-hover">
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.VariantName)
-                    <a href="@Url.Action("Editor", new {id = Model.Id})">
+                    <a href="@Url.Action("Editor", new {id = Model.Id, addNewVariant = true})">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </a>
                 </th>
