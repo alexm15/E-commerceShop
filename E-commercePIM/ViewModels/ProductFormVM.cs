@@ -5,9 +5,11 @@ using E_commerce.Library;
 
 namespace E_commercePIM.ViewModels
 {
-    public class ProductEditorViewModel
+    public class ProductFormVM
     {
         public int Id { get; set; }
+
+        public string Heading { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -31,7 +33,10 @@ namespace E_commercePIM.ViewModels
         public IEnumerable<Product> CurrentProductVariants { get; set; } = new List<Product>();
         public string ShowVariantPage { get; set; }
         public string ShowGeneralPage { get; set; }
-        public string VariantButtonName { get; set; }
+        public string VariantButtonName { get; set; } = "Add Variant";
         public int? VariantId { get; set; }
+        public bool EditMode { get; set; }
+
+        public string Action => (Id == 0) ? "Create" : "Edit";
     }
 }

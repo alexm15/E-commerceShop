@@ -72,40 +72,39 @@ namespace E_commerce.Data
 
         public async Task<Product> GetProductAsync(int? id)
         {
-            if (id == 0) return new Product();
             _context.Configuration.ProxyCreationEnabled = false;
             var dbProduct = await _context.Products
                 .Include(p => p.Categories)
                 .Include(p => p.Variants.Select(v => v.Categories)) //TODO: consider if this big join statement is better than multiple simple queries.
-                
                 .FirstOrDefaultAsync(p => p.Id == id);
             return dbProduct;
         }
 
-        public async Task AddOrUpdateProduct(Product product, ICollection<int> selectedCategoryIds)
+        public async Task UpdateProduct(Product product, ICollection<int> selectedCategoryIds)
         {
-            if (product.Id == 0) _context.Products.Add(product);
-
-            //TODO: try to clear list and then add a new instead.
-            var allCategoriesFromDB = await _context.Categories.ToListAsync();
-            UpdateProductCategories(product, selectedCategoryIds, allCategoriesFromDB);
-
-            if (product.ParentId == null)
-            {
-                foreach (var variant in product.Variants.ToList())
-                {
-                    //Should small queries for variants be used instead of big join?? (see GetProductAsync())
-                    UpdateProductCategories(variant, selectedCategoryIds, allCategoriesFromDB);
-                }
-            }
-
+            await UpdateProductRelations(product, selectedCategoryIds);
             await _context.SaveChangesAsync();
         }
 
-        //TODO: make this generic with UpdateCategoryProducts
-        private void UpdateProductCategories(Product product, ICollection<int> selectedCategoryIds, IEnumerable<Category> dbCateogries)
+        private async Task UpdateProductRelations(Product product, ICollection<int> selectedCategoryIds)
         {
-            foreach (var category in dbCateogries)
+            //TODO: try to clear list and then add a new instead.
+            var allCategories = await _context.Categories.ToListAsync();
+            UpdateProductCategories(product, selectedCategoryIds, await _context.Categories.ToListAsync());
+
+            if (IsParent(product))
+            {
+                product.Variants
+                    .ToList()
+                    .ForEach(variant => UpdateProductCategories(variant, selectedCategoryIds, allCategories));
+            }
+        }
+        private static bool IsParent(Product product) => product.ParentId == null && product.Variants.Count > 0;
+
+        //TODO: make this generic with UpdateCategoryProducts
+        private void UpdateProductCategories(Product product, ICollection<int> selectedCategoryIds, IEnumerable<Category> dbCategories)
+        {
+            foreach (var category in dbCategories)
             {
                 if (selectedCategoryIds.Contains(category.Id))
                 {
@@ -124,9 +123,10 @@ namespace E_commerce.Data
             }
         }
 
-        public async Task CreateAsync(Product product)
+        public async Task AddProduct(Product product, ICollection<int> selectedCategoryIds)
         {
             _context.Products.Add(product);
+            await UpdateProductRelations(product, selectedCategoryIds);
             await _context.SaveChangesAsync();
         }
     }

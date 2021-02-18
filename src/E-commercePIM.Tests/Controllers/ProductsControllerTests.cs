@@ -106,21 +106,21 @@ namespace E_commercePIM.Tests.Controllers
             Assert.Equal(1, model.Products.Count());
         }
 
-        [Fact(DisplayName = "Editor page where variantId is null shows general tab")]
+        [Fact(DisplayName = "Edit page where variantId is null shows general tab")]
         public async Task EditorPageGeneralTab()
         {
             IList<Product> products = new List<Product> {new Product {Id = 1},};
             var controller = CreateProductController(products, new List<Category>());
 
-            var model = await ControllerHelper.ExecuteActionAsync<ProductEditorViewModel>(
-                controller.Editor(1, null));
+            var model = await ControllerHelper.ExecuteActionAsync<ProductFormVM>(
+                controller.Edit(1, null));
 
             Assert.Equal("Add Variant", model.VariantButtonName);
             Assert.Null(model.ShowVariantPage);
             Assert.Equal("active", model.ShowGeneralPage);
         }
 
-        [Fact(DisplayName = "Editor page where variantId has value shows variant tab with details")]
+        [Fact(DisplayName = "Edit page where variantId has value shows variant tab with details")]
         public async Task EditorPageVariantTab()
         {
             var productVariant = new Product
@@ -138,8 +138,8 @@ namespace E_commercePIM.Tests.Controllers
             var controller = CreateProductController(products, new List<Category>());
 
 
-            var model = await ControllerHelper.ExecuteActionAsync<ProductEditorViewModel>(
-                controller.Editor(1, 2));
+            var model = await ControllerHelper.ExecuteActionAsync<ProductFormVM>(
+                controller.Edit(1, 2));
 
             Assert.Equal("Save", model.VariantButtonName);
             Assert.Equal("active", model.ShowVariantPage);

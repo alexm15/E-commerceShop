@@ -1,17 +1,21 @@
-﻿@model E_commercePIM.ViewModels.ProductEditorViewModel
+﻿@model E_commercePIM.ViewModels.ProductFormVM
 
 @{
-    ViewBag.Title = "Product Editor";
+    var title = (Model.EditMode) ? Model.Name : Model.Heading;
+    ViewBag.Title = title;
 }
 
 <div class="row">
-    <h2 class="col-md-5">@Model.Name</h2>
-    <div class="col-md-6">
-        @Html.ActionLink("Delete", "Delete", new { id = @Model.Id }, new { @class = "btn btn-danger top-button" })
-    </div>
-
+    <h2 class="col-md-5">@title</h2>
+    @if (Model.EditMode)
+    {
+        <div class="col-md-6">
+            @Html.ActionLink("Delete", "Delete", new {id = @Model.Id}, new {@class = "btn btn-danger top-button"})
+        </div>
+    }
 </div>
 
+<!-- Tabs -->
 <div class="row">
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="@Model.ShowGeneralPage">
@@ -27,8 +31,9 @@
 
 <!-- Tab panes -->
 <div class="tab-content">
+    <!-- General Page -->
     <div role="tabpanel" class="tab-pane @Model.ShowGeneralPage" id="general">
-        @using (Html.BeginForm())
+        @using (Html.BeginForm(Model.Action))
         {
             <div class="row">
                 @Html.AntiForgeryToken()
@@ -67,6 +72,7 @@
             </div>
         }
     </div>
+    <!-- Variants Page -->
     <div role="tabpanel" class="tab-pane @Model.ShowVariantPage" id="variants">
         @using (Html.BeginForm())
         {
@@ -105,7 +111,7 @@
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.VariantName)
-                    <a href="@Url.Action("Editor", new {id = Model.Id, addNewVariant = true})">
+                    <a href="@Url.Action("Edit", new {id = Model.Id, addNewVariant = true})">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </a>
                 </th>
@@ -130,7 +136,7 @@
                 <tr>
                     <td>
                         @Html.DisplayFor(model => variant.Name)
-                        <a href="@Url.Action("Editor", new {id = Model.Id, variantId = variant.Id})">
+                        <a href="@Url.Action("Edit", new {id = Model.Id, variantId = variant.Id})">
                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                         </a>
                     </td>

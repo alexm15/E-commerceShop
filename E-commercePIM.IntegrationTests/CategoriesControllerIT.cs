@@ -42,7 +42,7 @@ namespace E_commercePIM.IntegrationTests
             Assert.Equal(expectedProductCount, category.ProductCount);
         }
 
-        [Fact(DisplayName = "Editor page returns details of category and list of available product to add to category")]
+        [Fact(DisplayName = "Edit page returns details of category and list of available product to add to category")]
         public async Task EditorPage()
         {
             //See seeded data in Configuration class (called from super class)

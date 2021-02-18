@@ -152,7 +152,7 @@
     <Compile Include="ViewModels\CategoryDataViewModel.cs" />
     <Compile Include="ViewModels\CategoryEditorViewModel.cs" />
     <Compile Include="ViewModels\CategoryIndexViewModel.cs" />
-    <Compile Include="ViewModels\ProductEditorViewModel.cs" />
+    <Compile Include="ViewModels\ProductFormVM.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -198,7 +198,7 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Products\Editor.cshtml" />
+    <Content Include="Views\Products\ProductForm.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
     <Content Include="Views\Categories\Index.cshtml" />
     <Content Include="Views\Categories\Editor.cshtml" />

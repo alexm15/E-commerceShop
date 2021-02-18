@@ -10,7 +10,7 @@
     </div>
     <div class="col-lg-2">
         <p>
-            @Html.ActionLink("Create New", "Editor", new {id = 0}, new {@class = "btn btn-success top-button"})
+            @Html.ActionLink("Create New", "Create", new {}, new {@class = "btn btn-success top-button"})
         </p>
     </div>
     <div class="col-lg-4">
@@ -54,7 +54,7 @@
             {
                 <tr>
                     <td>
-                        <a href="@Url.Action("Editor", new {id = item.Id})">
+                        <a href="@Url.Action("Edit", new {id = item.Id})">
                             @Html.DisplayFor(modelItem => item.Name)
                         </a>
                     </td>

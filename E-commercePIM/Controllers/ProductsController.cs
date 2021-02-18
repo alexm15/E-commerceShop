@@ -42,13 +42,51 @@ namespace E_commercePIM.Controllers
             return View(model);
         }
 
-        public async Task<ActionResult> Editor(int? id, int? variantId, bool? addNewVariant = false)
+        public async Task<ActionResult> Create()
+        {
+            var model = new ProductFormVM
+            {
+                ShowGeneralPage = "active",
+                Heading = "Add new product",
+                AvailableCategories = await _context.Categories
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Name,
+                    }).ToListAsync()
+            };
+
+            return View("ProductForm", model);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(ProductFormVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.AvailableCategories = await _context.Categories
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Name,
+                    }).ToListAsync();
+                return View("ProductForm", model);
+            }
+
+            var product = _mapper.Map<Product>(model);
+            await _repository.AddProduct(product, new HashSet<int>(model.SelectedCategories));
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<ActionResult> Edit(int? id, int? variantId, bool? addNewVariant = false)
         {
             var product = await _repository.GetProductAsync(id);
-            var model = _mapper.Map<ProductEditorViewModel>(product);
+            var model = _mapper.Map<ProductFormVM>(product);
             model.CurrentProductVariants = product.Variants.ToList();
             model.VariantButtonName = "Add Variant";
-            
+            model.EditMode = true;
+            model.Heading = "Edit product";
+
             if (variantId != null || addNewVariant == true)
                 model.ShowVariantPage = "active";
             else model.ShowGeneralPage = "active";
@@ -60,15 +98,15 @@ namespace E_commercePIM.Controllers
                 model.VariantName = variant.Name;
                 model.VariantPrice = variant.Price;
                 model.VariantButtonName = "Save";
-            } 
+            }
 
             PopulateNavigationData(model, product);
 
-            return View(model);
+            return View("ProductForm", model);
         }
 
 
-        private void PopulateNavigationData(ProductEditorViewModel model, Product product)
+        private void PopulateNavigationData(ProductFormVM model, Product product)
         {
             model.AvailableCategories = _context.Categories
                 .Select(c => new SelectListItem
@@ -81,46 +119,51 @@ namespace E_commercePIM.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<ActionResult> Editor(ProductEditorViewModel model)
+        public async Task<ActionResult> Edit(ProductFormVM model)
         {
             var product = await _repository.GetProductAsync(model.Id);
+            if (product == null)
+                return HttpNotFound();
+
             if (!ModelState.IsValid)
             {
                 PopulateNavigationData(model, product);
-                return View(model);
+                return View("ProductForm", model);
             }
             product = _mapper.Map(model, product);
-            await _repository.AddOrUpdateProduct(product, new HashSet<int>(model.SelectedCategories));
+            await _repository.UpdateProduct(product, new HashSet<int>(model.SelectedCategories));
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<ActionResult> Delete(int id)
         {
             var productToDelete = await _repository.GetProductAsync(id);
+            if (productToDelete == null)
+                return HttpNotFound();
 
             await _repository.DeleteAsync(id);
 
-            if (productToDelete.ParentId != null) return RedirectToAction(nameof(Editor), new { id = productToDelete.ParentId });
+            if (productToDelete.ParentId != null) return RedirectToAction(nameof(Edit), new { id = productToDelete.ParentId });
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateVariant(ProductEditorViewModel model)
+        public async Task<ActionResult> UpdateVariant(ProductFormVM model)
         {
             var dbProduct = await _repository.GetProductAsync(model.VariantId);
             if (dbProduct == null)
                 return HttpNotFound();
-            
+
             dbProduct.Name = model.VariantName;
             dbProduct.Price = model.VariantPrice;
 
-            await _repository.AddOrUpdateProduct(dbProduct, new HashSet<int>(model.SelectedCategories));
+            await _repository.UpdateProduct(dbProduct, new HashSet<int>(model.SelectedCategories));
 
-            return RedirectToAction(nameof(Editor), new { id = model.Id, variantId = dbProduct.Id });
+            return RedirectToAction(nameof(Edit), new { id = model.Id, variantId = dbProduct.Id });
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddVariant(ProductEditorViewModel model)
+        public async Task<ActionResult> AddVariant(ProductFormVM model)
         {
             var variantName = $"{model.Name} {model.VariantName}";
             var product = new Product //existing product becomes new product instead
@@ -131,8 +174,8 @@ namespace E_commercePIM.Controllers
                 Description = model.Description,
             };
 
-            await _repository.AddOrUpdateProduct(product, new HashSet<int>(model.SelectedCategories));
-            return RedirectToAction(nameof(Editor), new { id = model.Id, addNewVariant = true });
+            await _repository.AddProduct(product, new HashSet<int>(model.SelectedCategories));
+            return RedirectToAction(nameof(Edit), new { id = model.Id, addNewVariant = true });
         }
     }
 }

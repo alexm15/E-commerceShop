@@ -37,12 +37,12 @@ namespace E_commercePIM.IntegrationTests
             Assert.Equal(8, model.Products.Count());
         }
 
-        [Fact(DisplayName = "Editor page shows details of product and both selected and available categories")]
+        [Fact(DisplayName = "Edit page shows details of product and both selected and available categories")]
         public async Task ShowEditorPage()
         {
             //See seeded data in Configuration class (called from super class)
-            var model = await ControllerHelper.ExecuteActionAsync<ProductEditorViewModel>(
-                _productsController.Editor(1,null));
+            var model = await ControllerHelper.ExecuteActionAsync<ProductFormVM>(
+                _productsController.Edit(1,null));
 
             Assert.Equal(1, model.Id);
             Assert.Equal("ASUS X554L Laptop", model.Name);
@@ -58,14 +58,14 @@ namespace E_commercePIM.IntegrationTests
         public async Task UpdateProductEditorPage()
         {
             //See seeded data in Configuration class (called from super class)
-            var viewModel = new ProductEditorViewModel
+            var viewModel = new ProductFormVM
             {
                 Id = 1,
                 Name = "ASUS Updated",
                 SelectedCategories = new[] {1, 3}
             };
             
-            await _productsController.Editor(viewModel);
+            await _productsController.Edit(viewModel);
             var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(
                 _productsController.Index(null, null, null));
 
@@ -80,12 +80,12 @@ namespace E_commercePIM.IntegrationTests
         public async Task CreateProductWithEditorPage()
         {
             //See seeded data in Configuration class (called from super class)
-            var viewModel = new ProductEditorViewModel
+            var viewModel = new ProductFormVM
             {
                 Name = "New Product",
             };
 
-            await _productsController.Editor(viewModel);
+            await _productsController.Edit(viewModel);
             var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(
                 _productsController.Index(null, null, null));
 
@@ -97,12 +97,12 @@ namespace E_commercePIM.IntegrationTests
         public async Task AddProductVariant()
         {
             //See seeded data in Configuration class (called from super class)
-            var viewModel = new ProductEditorViewModel
+            var viewModel = new ProductFormVM
             {
                 Name = "New Product",
             };
 
-            await _productsController.Editor(viewModel);
+            await _productsController.Edit(viewModel);
             var model = await ControllerHelper.ExecuteActionAsync<ProductIndexViewModel>(
                 _productsController.Index(null, null, null));
 
