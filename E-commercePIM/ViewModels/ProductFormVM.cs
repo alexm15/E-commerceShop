@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using E_commerce.Library;
+using E_commercePIM.Controllers;
 
 namespace E_commercePIM.ViewModels
 {
@@ -37,6 +41,18 @@ namespace E_commercePIM.ViewModels
         public int? VariantId { get; set; }
         public bool EditMode { get; set; }
 
-        public string Action => (Id == 0) ? "Create" : "Edit";
+        public string Action 
+        {
+            get
+            {
+                Expression<Func<ProductsController, Task<ActionResult>>> edit = 
+                    (c => c.Edit(this));
+                Expression<Func<ProductsController, Task<ActionResult>>> create = 
+                    (c => c.Create(this));
+                var action = (Id == 0) ? create : edit;
+
+                return (action.Body as MethodCallExpression)?.Method.Name;
+            }
+        }
     }
 }
