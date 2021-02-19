@@ -107,51 +107,53 @@
             </div>
         }
 
-        <table class="table table-responsive table-bordered table-hover">
+    <table class="table table-responsive table-bordered table-hover">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.VariantName)
+                <a href="@Url.Action("Edit", new {id = Model.Id, addNewVariant = true})">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VariantPrice)
+            </th>
+            <th></th>
+        </tr>
+
+        <!-- Parent Product -->
+        <tr class="text-muted">
+            <td>
+                @Html.DisplayFor(model => model.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Price)
+            </td>
+            <td>
+            </td>
+        </tr>
+        <!-- Product Variants -->
+        @foreach (var variant in Model.CurrentProductVariants)
+        {
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.VariantName)
-                    <a href="@Url.Action("Edit", new {id = Model.Id, addNewVariant = true})">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                <td>
+                    @Html.DisplayFor(model => variant.Name)
+                    <a href="@Url.Action("Edit", new {id = Model.Id, variantId = variant.Id})">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.VariantPrice)
-                </th>
-                <th></th>
-            </tr>
-
-            <tr class="text-muted">
-                <td>
-                    @Html.DisplayFor(model => model.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.Price)
+                    @Html.DisplayFor(model => variant.Price)
                 </td>
                 <td>
+                    <a href="@Url.Action("Delete", new {id = variant.Id})">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </a>
                 </td>
             </tr>
-            @foreach (var variant in Model.CurrentProductVariants)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(model => variant.Name)
-                        <a href="@Url.Action("Edit", new {id = Model.Id, variantId = variant.Id})">
-                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                        </a>
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => variant.Price)
-                    </td>
-                    <td>
-                        <a href="@Url.Action("Delete", new {id = variant.Id})">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                        </a>
-                    </td>
-                </tr>
-            }
+        }
 
-        </table>
+    </table>
     </div>
 </div>
 

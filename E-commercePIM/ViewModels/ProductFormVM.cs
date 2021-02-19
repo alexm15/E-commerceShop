@@ -15,6 +15,8 @@ namespace E_commercePIM.ViewModels
 
         public string Heading { get; set; }
 
+        public ProductVM Product { get; set; }
+
         [Required]
         public string Name { get; set; }
 
@@ -35,6 +37,7 @@ namespace E_commercePIM.ViewModels
         public decimal VariantPrice { get; set; }
         
         public IEnumerable<Product> CurrentProductVariants { get; set; } = new List<Product>();
+        public IEnumerable<ProductVM> CurrentProductVariants2 { get; set; } = new List<ProductVM>();
         public string ShowVariantPage { get; set; }
         public string ShowGeneralPage { get; set; }
         public string VariantButtonName { get; set; } = "Add Variant";
@@ -54,5 +57,17 @@ namespace E_commercePIM.ViewModels
                 return (action.Body as MethodCallExpression)?.Method.Name;
             }
         }
+    }
+
+    public class ProductVM
+    {
+        [Required]
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        [Required]
+        [DataType(DataType.Currency)]
+        public decimal Price { get; set; }
     }
 }
